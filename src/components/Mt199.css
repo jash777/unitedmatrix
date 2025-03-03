@@ -1,0 +1,10 @@
+#mt199-part1, #mt199-part2{
+    font-size: 12px;
+    font-weight: bold;
+    font-family: "Courier Prime", monospace;
+}
+
+#mt199body p {
+    white-space: pre-wrap;
+    line-height: normal;
+}

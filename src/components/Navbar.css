@@ -1,0 +1,507 @@
+.bank-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Navigation bar */
+.bank-navbar-nav {
+    background-color: #1a365d;
+    padding: 0;
+}
+
+.bank-nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.bank-nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.bank-nav-logo a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+}
+
+.bank-nav-logo img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
+.bank-nav-logo span {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1.3rem;
+    white-space: nowrap;
+}
+
+.bank-nav-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.bank-nav-item {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.bank-nav-item a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 1.25rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.bank-nav-item a:hover {
+    background-color: #2c5282;
+    color: #ffffff;
+}
+
+.bank-nav-item.active a {
+    color: #ffffff;
+    background-color: #2d3748;
+    font-weight: 600;
+}
+
+.bank-nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background-color: #63b3ed;
+    border-radius: 3px 3px 0 0;
+}
+
+.bank-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+/* Status indicators */
+.bank-status-indicators {
+    display: flex;
+    gap: 1rem;
+}
+
+.bank-status-indicator {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-dot.online {
+    background-color: #38a169;
+    box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.2);
+}
+
+.status-dot.active {
+    background-color: #3182ce;
+    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+}
+
+.status-dot.offline {
+    background-color: #e53e3e;
+    box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.2);
+}
+
+/* Time display */
+.bank-time-display {
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+}
+
+/* User profile */
+.bank-user-profile {
+    position: relative;
+    cursor: pointer;
+}
+
+.bank-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #4299e1;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.bank-user-avatar:hover {
+    background-color: #63b3ed;
+    transform: scale(1.05);
+}
+
+.bank-user-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 220px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e2e8f0;
+    z-index: 1000;
+    overflow: hidden;
+    animation: dropdown-fade 0.2s ease;
+}
+
+.user-info-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #1a365d;
+    font-size: 0.95rem;
+}
+
+.user-role {
+    color: #4a5568;
+    font-size: 0.8rem;
+    margin-top: 2px;
+}
+
+@keyframes dropdown-fade {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bank-user-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0;
+}
+
+.bank-user-dropdown li {
+    padding: 0;
+}
+
+.bank-user-dropdown li a {
+    display: block;
+    padding: 0.75rem 1.25rem;
+    color: #4a5568;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.15s ease;
+}
+
+.bank-user-dropdown li a:hover {
+    background-color: #f8fafc;
+    color: #1a365d;
+}
+
+.bank-user-dropdown li.dropdown-divider {
+    height: 1px;
+    background-color: #e2e8f0;
+    margin: 0.5rem 0;
+}
+
+.bank-user-dropdown li a.logout-link {
+    color: #e53e3e;
+}
+
+.bank-user-dropdown li a.logout-link:hover {
+    background-color: #fff5f5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .bank-nav-container {
+        padding: 0 1rem;
+        height: 60px;
+    }
+    
+    .bank-nav-logo span {
+        font-size: 1.1rem;
+    }
+    
+    .bank-nav-menu {
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .bank-navbar {
+        position: relative;
+    }
+    
+    .bank-nav-container {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 0.5rem;
+    }
+    
+    .bank-nav-logo {
+        flex: 1;
+    }
+    
+    .bank-nav-menu {
+        order: 3;
+        width: 100%;
+        justify-content: space-around;
+        padding: 0.5rem 0;
+        background-color: #2c5282;
+    }
+    
+    .bank-nav-item {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .bank-nav-item a {
+        padding: 0.5rem;
+        justify-content: center;
+        font-size: 0.85rem;
+    }
+    
+    .bank-nav-actions {
+        flex: none;
+    }
+    
+    .bank-status-indicators {
+        display: none;
+    }
+    
+    .bank-time-display {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .bank-nav-container {
+        padding: 0.5rem;
+    }
+    
+    .bank-nav-logo img {
+        height: 30px;
+    }
+    
+    .bank-nav-logo span {
+        font-size: 1rem;
+    }
+    
+    .bank-nav-menu {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .bank-nav-item {
+        min-width: 33%;
+    }
+    
+    .bank-user-dropdown {
+        right: -10px;
+        width: 200px;
+    }
+}
+
+/* Add mobile menu button styles */
+.mobile-menu-button {
+    display: none;
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.menu-icon {
+    display: block;
+    width: 25px;
+    height: 2px;
+    background-color: white;
+    position: relative;
+}
+
+.menu-icon::before,
+.menu-icon::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    left: 0;
+}
+
+.menu-icon::before {
+    top: -6px;
+}
+
+.menu-icon::after {
+    bottom: -6px;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-button {
+        display: block;
+    }
+
+    .bank-nav-menu {
+        display: none;
+    }
+
+    .bank-nav-menu.mobile-open {
+        display: flex;
+    }
+}
+
+/* Transfer Types Navigation */
+.bank-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.transfer-types-nav {
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.transfer-types-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  -ms-overflow-style: none;
+}
+
+.transfer-types-container::-webkit-scrollbar {
+  height: 4px;
+}
+
+.transfer-types-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.transfer-types-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.transfer-type-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: #4a5568;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.transfer-type-btn:hover {
+  background-color: #edf2f7;
+  color: #2d3748;
+}
+
+.transfer-type-btn.active {
+  background-color: #1a365d;
+  color: white;
+}
+
+.transfer-icon {
+  font-size: 1.1rem;
+}
+
+/* Responsive styles for transfer types */
+@media (max-width: 992px) {
+  .transfer-types-container {
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+  }
+
+  .transfer-type-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .transfer-types-container {
+    padding: 0.4rem 0.8rem;
+    justify-content: flex-start;
+  }
+
+  .transfer-type-btn {
+    flex: 0 0 auto;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .transfer-types-container {
+    padding: 0.3rem 0.5rem;
+  }
+
+  .transfer-type-btn {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .transfer-icon {
+    font-size: 1rem;
+  }
+}

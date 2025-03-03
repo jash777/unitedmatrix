@@ -1,0 +1,101 @@
+#form3-part1, #form3-part2,  #form3-part3, #form3-part4{
+    font-size: 12px;
+    font-weight: bold;
+    font-family: "Courier Prime", monospace;
+}
+
+.form3-container {
+    width: 864px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+.form3-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #333;
+}
+
+.form3-section {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+.form3-section h4 {
+    margin-top: 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.form3-row {
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.form3-label {
+    width: 200px;
+    font-weight: bold;
+}
+
+.form3-value {
+    flex: 1;
+}
+
+.form3-footer {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 2px solid #333;
+    text-align: center;
+    font-size: 10px;
+}
+
+/* Signature section styles */
+.signature-section {
+    margin-top: 2rem;
+    page-break-inside: avoid;
+}
+
+.signature-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.signature-image {
+    max-width: 100%;
+    height: 60px;
+    object-fit: contain;
+}
+
+/* Ensure proper page breaks */
+.page-break-before {
+    page-break-before: always !important;
+}
+
+.page-break-after {
+    page-break-after: always !important;
+}
+
+.page-break-avoid {
+    page-break-inside: avoid !important;
+}
+
+/* Print-specific styles */
+@media print {
+    .signature-section {
+        margin-top: 2rem !important;
+        page-break-inside: avoid !important;
+    }
+
+    .signature-image {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}

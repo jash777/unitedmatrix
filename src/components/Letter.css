@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Calibri';
+    src: local('../assets/Fonts/Calibri.tff');
+}
+
+#letter {
+    font-family: 'Calibri';
+    font-size: 14px;
+    line-height: normal;
+}
+
+#letterbody p {
+    white-space: pre-wrap;
+}

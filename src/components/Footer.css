@@ -1,0 +1,147 @@
+.bank-footer {
+  background-color: #002447;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  padding: 1.5rem 0;
+  width: 100%;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.bank-footer-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.bank-footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bank-footer-system-info {
+  flex: 0 0 auto;
+  max-width: 350px;
+}
+
+.bank-footer-system-info h3 {
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.system-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+}
+
+.info-label {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.2rem;
+}
+
+.info-value {
+  color: white;
+  font-weight: 500;
+}
+
+.info-value .status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.info-value .status-dot.online {
+  background-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.bank-footer-legal {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.bank-footer-legal p {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.legal-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.legal-links a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: all 0.15s ease;
+}
+
+.legal-links a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.bank-footer-compliance {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.bank-footer-compliance p {
+  margin: 0.25rem 0;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 992px) {
+  .bank-footer-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .bank-footer-system-info {
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .bank-footer-legal {
+    align-items: flex-start;
+    text-align: left;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .bank-footer {
+    padding: 1rem 0;
+  }
+  
+  .system-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .legal-links {
+    gap: 1rem;
+  }
+} 

@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #003b70;
+  --primary-dark: #002d57;
+  --primary-light: #e6f0fa;
+  --secondary-color: #0a6640;
+  --secondary-dark: #08512f;
+  --text-dark: #212529;
+  --text-medium: #495057;
+  --text-light: #6c757d;
+  --border-color: #e0e0e0;
+  --background-light: #f8f9fa;
+  --background-white: #ffffff;
+}
+
+body {
+  @apply bg-gray-100;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+}
+
+/* Banking-specific styles */
+.banking-container {
+  @apply bg-white rounded-lg shadow-lg p-6 mb-6;
+  border: 1px solid var(--border-color);
+}
+
+.banking-header {
+  @apply text-xl font-semibold mb-4 pb-3;
+  color: var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.banking-section {
+  @apply mb-6;
+}
+
+.banking-label {
+  @apply block text-sm font-medium mb-1;
+  color: var(--text-medium);
+}
+
+.banking-input {
+  @apply w-full px-3 py-2 border rounded-md;
+  border-color: var(--border-color);
+  background-color: var(--background-light);
+}
+
+.banking-input:focus {
+  @apply outline-none ring-2;
+  border-color: var(--primary-color);
+  ring-color: var(--primary-light);
+}
+
+.banking-button {
+  @apply px-4 py-2 rounded-md font-medium;
+  background-color: var(--primary-color);
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.banking-button:hover {
+  background-color: var(--primary-dark);
+}
+
+.banking-button-secondary {
+  @apply px-4 py-2 rounded-md font-medium;
+  background-color: white;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.banking-button-secondary:hover {
+  @apply bg-gray-50;
+}
+
+/* Print-specific styles */
+.printingclass {
+  top: 0;
+}
+
+.printing-class2 {
+  /* Your printing class styles */
+}
+
+@media print {
+  body { 
+    -webkit-print-color-adjust: exact; 
+    background-color: white;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  .print-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    box-shadow: none;
+    border: none;
+  }
+}
+
+/* Custom checkbox styling */
+input[type=checkbox] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+input[type=checkbox]::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+input[type=checkbox]:checked::before {
+  content: '\2713';
+  font-size: 16px;
+  text-align: center;
+  line-height: 20px;
+  color: white;
+  background-color: var(--primary-color);
+  border-radius: 4px;
+}
+
+.active {
+  @apply bg-gray-100;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* Additional banking UI elements */
+.bank-card {
+  @apply rounded-lg shadow-md p-5 bg-white mb-4;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.bank-card:hover {
+  @apply shadow-lg;
+  transform: translateY(-2px);
+}
+
+.bank-table {
+  @apply w-full border-collapse;
+}
+
+.bank-table th {
+  @apply px-4 py-3 text-left bg-gray-50 font-semibold text-sm;
+  color: var(--text-medium);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bank-table td {
+  @apply px-4 py-3 border-b;
+  border-color: var(--border-color);
+}
+
+.bank-table tr:last-child td {
+  @apply border-b-0;
+}
+
+.bank-table tr:hover {
+  @apply bg-gray-50;
+}

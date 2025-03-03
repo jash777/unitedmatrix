@@ -1,0 +1,1036 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure International Bank Transfer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a365d;      /* Deep navy blue */
+            --secondary-color: #2c5282;    /* Royal blue */
+            --accent-color: #e2e8f0;       /* Light gray-blue */
+            --success-color: #276749;      /* Deep green */
+            --warning-color: #c05621;      /* Deep orange */
+            --error-color: #c53030;        /* Deep red */
+            --text-primary: #2d3748;       /* Dark gray-blue */
+            --text-secondary: #4a5568;     /* Medium gray-blue */
+            --border-color: #cbd5e0;       /* Light gray */
+            --white: #ffffff;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7fafc;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1.5rem;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .bank-logo img {
+            height: 60px;
+            filter: brightness(0) invert(1);
+        }
+        
+        .header h1 {
+            color: var(--white);
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-bar {
+            background-color: var(--accent-color);
+            padding: 0.75rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 1rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #48bb78;
+        }
+        
+        .form-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: #ffffff;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent-color);
+        }
+        
+        .section-icon {
+            background: var(--primary-color);
+            color: var(--white);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .section-header h3 {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            margin: 0;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: var(--white);
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
+        }
+        
+        .transfer-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .transfer-option {
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+        
+        .transfer-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .transfer-option.selected {
+            border-color: var(--secondary-color);
+            background-color: rgba(44, 82, 130, 0.05);
+        }
+        
+        .transfer-option-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .transfer-option-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .transfer-option-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, var(--success-color), #2f855a);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .security-notice {
+            background-color: #fffaf0;
+            border-left: 4px solid var(--warning-color);
+            padding: 1rem;
+            margin: 2rem 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        footer {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .form-container {
+                padding: 1rem;
+                margin: 1rem;
+            }
+            
+            .transfer-options {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .field-info {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+        
+        .required::after {
+            content: "*";
+            color: var(--error-color);
+            margin-left: 0.25rem;
+        }
+        
+        .loading {
+            position: relative;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Header specific styles */
+        .bank-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 1.5rem 0;
+            color: var(--white);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding-bottom: 1.5rem;
+        }
+
+        .bank-branding {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .bank-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .bank-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--white);
+        }
+
+        .header-info {
+            display: flex;
+            gap: 2.5rem;
+            font-size: 0.875rem;
+        }
+
+        .header-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .header-info-item i {
+            font-size: 1.125rem;
+            opacity: 0.8;
+        }
+
+        .header-main {
+            max-width: 1400px;
+            margin: 1.5rem auto 0;
+            padding: 0 2.5rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .header-section {
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* .header-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        } */
+
+        .header-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .header-section-content {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8125rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.375rem 0.75rem;
+            border-radius: 16px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #48bb78;
+            box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.2);
+        }
+
+        .status-dot.warning {
+            background-color: #ecc94b;
+            box-shadow: 0 0 0 2px rgba(236, 201, 75, 0.2);
+        }
+
+        .swift-status {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .swift-connection {
+            font-size: 0.8125rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.9;
+        }
+
+        /* Status Bar improvements */
+        .status-bar {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 0.75rem 2.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            font-size: 0.875rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .header-main {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+                padding: 1rem;
+            }
+
+            .header-info {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+
+            .header-main {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .bank-name {
+                font-size: 1.5rem;
+            }
+
+            .status-bar {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: center;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="bank-header">
+        <div class="header-top">
+            <div class="bank-branding">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/SWIFT_2021_logo.svg/2051px-SWIFT_2021_logo.svg.png" alt="Bank Logo" class="bank-logo">
+                <div class="bank-name">United Matrix Banking</div>
+            </div>
+            <div class="header-info">
+                <div class="header-info-item">
+                    <i class="fas fa-clock"></i>
+                    <span><?php echo date('d M Y H:i:s'); ?></span>
+                </div>
+                <div class="header-info-item">
+                    <i class="fas fa-globe"></i>
+                    <span>GMT +00:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-main">
+            <div class="header-section">
+                <div class="header-section-title">Account Manager</div>
+                <div class="header-section-content">
+                    <div>David Esamal</div>
+                    <div>Senior Banking Officer</div>
+                    <div>ID: BE78952</div>
+                </div>
+            </div>
+
+            <div class="header-section">
+                <div class="header-section-title">System Status</div>
+                <div class="header-section-content">
+                    <div class="connection-status">
+                       
+                    </div>
+                    <div class="swift-status">
+                        <div class="swift-connection">
+                            <span class="status-dot"></span>
+                            SWIFT BIC: BARCGB22
+                        </div>
+                        <div class="swift-connection">
+                            <span class="status-dot"></span>
+                            SEPA Connected
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-section">
+                <div class="header-section-title">Session Information</div>
+                <div class="header-section-content">
+                    <div>Session ID: <?php echo session_id(); ?></div>
+                    <div>IP: <?php echo $_SERVER['REMOTE_ADDR']; ?></div>
+                    <div class="connection-status">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="form-container">
+        <form id="transferForm" method="POST">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">1</div>
+                    <h3>SELECT TRANSFER TYPE</h3>
+                </div>
+                
+                <div class="transfer-options">
+                    <!-- Payment Section -->
+                    <div class="transfer-option" data-form="doMT103.php" data-type="mt103">
+                        <div class="transfer-option-icon">🔄</div>
+                        <div class="transfer-option-title">MT103</div>
+                        <div class="transfer-option-description">Standard Single Customer Credit Transfer</div>
+                    </div>
+
+                    <div class="transfer-option" data-form="doMT103gpi.php" data-type="mt103gpi">
+                        <div class="transfer-option-icon">⚡</div>
+                        <div class="transfer-option-title">MT103 GPI</div>
+                        <div class="transfer-option-description">Global Payment Innovation Transfer</div>
+                    </div>
+
+                    <div class="transfer-option" data-form="doMT103tt.php" data-type="mt103tt">
+                        <div class="transfer-option-icon">📡</div>
+                        <div class="transfer-option-title">MT103 TT</div>
+                        <div class="transfer-option-description">Telegraphic Transfer</div>
+                    </div>
+
+                    <div class="transfer-option" data-form="doMT103eft.php" data-type="mt103eft">
+                        <div class="transfer-option-icon">💳</div>
+                        <div class="transfer-option-title">MT103 EFT</div>
+                        <div class="transfer-option-description">Electronic Funds Transfer</div>
+                    </div>
+
+                    <div class="transfer-option" data-form="doMT103202.php" data-type="mt103202">
+                        <div class="transfer-option-icon">🏦</div>
+                        <div class="transfer-option-title">MT103/202</div>
+                        <div class="transfer-option-description">Combined Customer/Bank Transfer</div>
+                    </div>
+
+                    <div class="transfer-option" data-form="doMT202.php" data-type="mt202">
+                        <div class="transfer-option-icon">🔁</div>
+                        <div class="transfer-option-title">MT202 COV</div>
+                        <div class="transfer-option-description">Bank-to-Bank Cover Payment</div>
+                    </div>
+
+                    <!-- Financial Instruments Section -->
+                    <div class="transfer-option" data-form="doMT760.php" data-type="mt760">
+                        <div class="transfer-option-icon">📜</div>
+                        <div class="transfer-option-title">MT760</div>
+                        <div class="transfer-option-description">Guarantee/Standby Letter of Credit</div>
+                    </div>
+
+                    <div class="transfer-option" data-form="doMT110.php" data-type="mt110">
+                        <div class="transfer-option-icon">📋</div>
+                        <div class="transfer-option-title">MT110</div>
+                        <div class="transfer-option-description">Advice of Bills</div>
+                    </div>
+
+                    <div class="transfer-option" data-form="doMT700.php" data-type="mt700">
+                        <div class="transfer-option-icon">📄</div>
+                        <div class="transfer-option-title">MT700</div>
+                        <div class="transfer-option-description">Documentary Letter of Credit</div>
+                    </div>
+
+                    <div class="transfer-option" data-form="doMT199.php" data-type="mt199">
+                        <div class="transfer-option-icon">📝</div>
+                        <div class="transfer-option-title">MT199</div>
+                        <div class="transfer-option-description">Free Format Message</div>
+                    </div>
+
+                    <div class="transfer-option" data-form="doMT799.php" data-type="mt799">
+                        <div class="transfer-option-icon">📨</div>
+                        <div class="transfer-option-title">MT799</div>
+                        <div class="transfer-option-description">Free Format Message</div>
+                    </div>
+
+                    <div class="transfer-option" data-form="doMT999.php" data-type="mt999">
+                        <div class="transfer-option-icon">✉️</div>
+                        <div class="transfer-option-title">MT999</div>
+                        <div class="transfer-option-description">Free Format Message</div>
+                    </div>
+
+                    <div class="transfer-option" data-form="doMT542.php" data-type="mt542">
+                        <div class="transfer-option-icon">💱</div>
+                        <div class="transfer-option-title">DVP</div>
+                        <div class="transfer-option-description">Delivery Versus Payment</div>
+                    </div>
+                </div>
+                
+                <!-- Additional fields for specific transfer types -->
+                <div id="gpi-fields" class="additional-fields" data-type="gpi">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gpi_tracking" class="required">GPI Tracking Reference</label>
+                            <input type="text" id="gpi_tracking" name="gpi_tracking" placeholder="Enter GPI tracking number">
+                            <div class="field-info">Unique reference number for end-to-end payment tracking</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gpi_service" class="required">GPI Service Level</label>
+                            <select id="gpi_service" name="gpi_service">
+                                <option value="G1">G1 - Same Day Credit (Standard)</option>
+                                <option value="G2">G2 - Instant Payment</option>
+                                <option value="G3">G3 - Same Day Economy</option>
+                                <option value="G4">G4 - Next Day Economy</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="mt199-fields" class="additional-fields" data-type="mt199">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="mt199_reference" class="required">Related Reference</label>
+                            <input type="text" id="mt199_reference" name="mt199_reference" placeholder="Enter related transaction reference">
+                        </div>
+                        <div class="form-group">
+                            <label for="mt199_message" class="required">Free Format Message</label>
+                            <input type="text" id="mt199_message" name="mt199_message" placeholder="Enter message content">
+                            <div class="field-info">Up to 150 characters of free format text</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="mt202-fields" class="additional-fields" data-type="mt202">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="mt202_institution" class="required">Receiving Institution</label>
+                            <input type="text" id="mt202_institution" name="mt202_institution" placeholder="Enter receiving bank BIC">
+                        </div>
+                        <div class="form-group">
+                            <label for="mt202_account" class="required">Institution Account</label>
+                            <input type="text" id="mt202_account" name="mt202_account" placeholder="Enter institution account">
+                            <div class="field-info">For bank-to-bank transfers only</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">2</div>
+                    <h3>AUTHENTICATION</h3>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vOTP" class="required">One-Time Password Authentication</label>
+                        <input type="text" id="vOTP" name="vOTP" required placeholder="Enter OTP code">
+                        <div class="field-info">Please enter the authentication code sent to your registered device  | use this [ !WL8KTKY@!MQW87H ]</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">3</div>
+                    <h3>TRANSACTION DETAILS</h3>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field_20" class="required">:20: Transaction Reference Number</label>
+                        <input type="text" id="field_20" name="field_20" readonly>
+                        <div class="field-info">Unique transaction reference - auto-generated</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_23b" class="required">:23B: Bank Operation Code</label>
+                        <input type="text" id="field_23b" name="field_23b" value="CRED" required readonly>
+                        <div class="field-info">CRED = Standard Credit Transfer</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field_32a_1" class="required">:32A: Value Date (YYMMDD)</label>
+                        <input type="text" id="field_32a_1" name="field_32a_1" required placeholder="YYMMDD">
+                        <div class="field-info">Format: Year (2 digits), Month, Day</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_32a_2" class="required">:32A: Currency</label>
+                        <select id="field_32a_2" name="field_32a_2" required>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="USD">USD - US Dollar</option>
+                            <option value="GBP">GBP - British Pound</option>
+                            <option value="JPY">JPY - Japanese Yen</option>
+                            <option value="CHF">CHF - Swiss Franc</option>
+                            <option value="CAD">CAD - Canadian Dollar</option>
+                            <option value="AUD">AUD - Australian Dollar</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_32a_3" class="required">:32A: Amount</label>
+                        <input type="text" id="field_32a_3" name="field_32a_3" required placeholder="Amount (e.g., 1000.00)">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field_33b_1" class="required">:33B: Currency/Original Ordered Amount</label>
+                        <select id="field_33b_1" name="field_33b_1" required>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="USD">USD - US Dollar</option>
+                            <option value="GBP">GBP - British Pound</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_33b_2" class="required">:33B: Original Amount</label>
+                        <input type="text" id="field_33b_2" name="field_33b_2" required placeholder="Original amount">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">4</div>
+                    <h3>ORDERING CUSTOMER (SENDER) INFORMATION</h3>
+                </div>
+                
+                <!-- Add Account Selection Dropdown -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="sender_account_select" class="required">Select Account</label>
+                        <select id="sender_account_select" name="sender_account_select" required>
+                            <option value="">-- Select Account --</option>
+                            <!-- Options will be populated via JavaScript -->
+                        </select>
+                        <div class="field-info">Choose your account to auto-fill sender details</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field_50a_1" class="required">:50A: Ordering Customer Name</label>
+                        <input type="text" id="field_50a_1" name="field_50a_1" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_50a_2" class="required">:50A: Account Number/IBAN</label>
+                        <input type="text" id="field_50a_2" name="field_50a_2" required readonly>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field_52a_1" class="required">:52A: Ordering Institution BIC</label>
+                        <input type="text" id="field_52a_1" name="field_52a_1" required readonly>
+                        <div class="field-info">Bank's SWIFT/BIC code</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_52a_2" class="required">:52A: Bank Name</label>
+                        <input type="text" id="field_52a_2" name="field_52a_2" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_52a_3" class="required">:52A: Bank Address</label>
+                        <input type="text" id="field_52a_3" name="field_52a_3" required readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">5</div>
+                    <h3>INTERMEDIARY AND BENEFICIARY BANK INFORMATION</h3>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field_56a">:56A: Intermediary Bank</label>
+                        <input type="text" id="field_56a" name="field_56a" placeholder="Optional">
+                        <div class="field-info">Intermediary bank's BIC if applicable</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_57a_1" class="required">:57A: Beneficiary Bank Name</label>
+                        <input type="text" id="field_57a_1" name="field_57a_1" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field_57a_2" class="required">:57A: Beneficiary Bank Address</label>
+                        <input type="text" id="field_57a_2" name="field_57a_2" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_57a_3" class="required">:57A: Beneficiary Bank BIC</label>
+                        <input type="text" id="field_57a_3" name="field_57a_3" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">6</div>
+                    <h3>BENEFICIARY INFORMATION</h3>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field_59_1" class="required">:59: Beneficiary Name</label>
+                        <input type="text" id="field_59_1" name="field_59_1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_59_2" class="required">:59: Account Number/IBAN</label>
+                        <input type="text" id="field_59_2" name="field_59_2" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">7</div>
+                    <h3>PAYMENT DETAILS</h3>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field_70" class="required">:70: Remittance Information</label>
+                        <input type="text" id="field_70" name="field_70" required>
+                        <div class="field-info">Purpose of payment/Reference</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_71a" class="required">:71A: Details of Charges</label>
+                        <select id="field_71a" name="field_71a" required>
+                            <option value="OUR">OUR - All charges paid by sender</option>
+                            <option value="SHA">SHA - Shared charges</option>
+                            <option value="BEN">BEN - All charges paid by beneficiary</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field_72">:72: Sender to Receiver Information</label>
+                        <input type="text" id="field_72" name="field_72">
+                        <div class="field-info">Additional information for receiving bank</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="field_77b">:77B: Regulatory Reporting</label>
+                        <input type="text" id="field_77b" name="field_77b">
+                        <div class="field-info">Required regulatory information</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden fields that might be needed but can be empty -->
+            <input type="hidden" name="field_53a" value="">
+            <input type="hidden" name="field_54a" value="">
+            <input type="hidden" id="transfer_type" name="transfer_type" value="mt103">
+
+            <div class="security-notice">
+                <strong>IMPORTANT SECURITY NOTICE:</strong> Never share your OTP code with anyone. Bank staff will never ask for your full authentication details. This secure form uses encryption to protect your data during transmission.
+            </div>
+
+            <div class="form-footer">
+                <button type="button" class="btn-submit" onclick="handleTransferSubmit()">AUTHORIZE TRANSACTION</button>
+            </div>
+        </form>
+    </div>
+    
+    <footer>
+        © 2025 Secure Banking Services. All banking transactions are subject to international banking regulations and compliance procedures.
+        Different transfer types have specific processing times and fee structures. Please check with your bank for details.
+    </footer>
+
+    <!-- Add this debug element temporarily -->
+    <div id="debug" style="display:none;"></div>
+
+    <!-- Add this right after the body tag -->
+    <div class="status-bar">
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            SWIFT Network: Connected
+        </div>
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            Banking System: Online
+        </div>
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            Security: Active
+        </div>
+    </div>
+
+    <!-- Add Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+
+    <!-- Add this where you want the PDF generation to happen -->
+    <iframe 
+        id="pdf-generator" 
+        style="display: none;" 
+        src="/src/components/PrintForm3.jsx">
+    </iframe>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Default form action
+            document.getElementById('transferForm').action = 'doMT103.php';
+            
+            const senderSelect = document.getElementById('sender_account_select');
+            
+            // Fetch accounts from API
+            fetch('http://localhost:3000/api/accounts')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(accounts => {
+                    console.log('Accounts loaded:', accounts);
+                    
+                    // Clear any existing options
+                    senderSelect.innerHTML = '<option value="">Select an account</option>';
+                    
+                    accounts.forEach(account => {
+                        const option = document.createElement('option');
+                        option.value = account.accountNumber;
+                        option.setAttribute('data-name', account.accountName);
+                        option.setAttribute('data-swift', account.swiftCode);
+                        option.setAttribute('data-bank', account.bankName);
+                        option.setAttribute('data-address', account.bankAddress);
+                        option.textContent = `${account.accountName} - ${account.accountNumber}`;
+                        senderSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading accounts:', error);
+                    const senderSelect = document.getElementById('sender_account_select');
+                    senderSelect.innerHTML = '<option value="">Error loading accounts</option>';
+                });
+            
+            // Handle account selection
+            senderSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                
+                if (selectedOption.value) {
+                    // Update form fields
+                    document.getElementById('field_50a_1').value = selectedOption.getAttribute('data-name');
+                    document.getElementById('field_50a_2').value = selectedOption.value;
+                    document.getElementById('field_52a_1').value = selectedOption.getAttribute('data-swift');
+                    document.getElementById('field_52a_2').value = selectedOption.getAttribute('data-bank');
+                    document.getElementById('field_52a_3').value = selectedOption.getAttribute('data-address');
+                    
+                    // Debug output
+                    console.log('Selected account:', {
+                        name: selectedOption.getAttribute('data-name'),
+                        account: selectedOption.value,
+                        swift: selectedOption.getAttribute('data-swift'),
+                        bank: selectedOption.getAttribute('data-bank'),
+                        address: selectedOption.getAttribute('data-address')
+                    });
+                }
+            });
+
+            // Auto-generate transaction reference
+            const field20 = document.getElementById('field_20');
+            field20.value = generateTRN();
+        });
+
+        function handleTransferSubmit() {
+            // Collect form data
+            const formData = {
+                instructionType: document.querySelector('.transfer-option.selected').getAttribute('data-type'),
+                senderInfo: {
+                    SwiftCode: document.getElementById('field_52a_1').value,
+                    BankName: document.getElementById('field_52a_2').value,
+                    BankAddress: document.getElementById('field_52a_3').value,
+                    AccountName: document.getElementById('field_50a_1').value,
+                    AccountNumber: document.getElementById('field_50a_2').value
+                },
+                // ... other form data ...
+            };
+
+            // Encode data for URL
+            const encodedData = encodeURIComponent(JSON.stringify(formData));
+            
+            // Open React app in new window with data
+            window.open(`/react-app/print?data=${encodedData}`, '_blank');
+        }
+
+        function generateTRN() {
+            const date = new Date();
+            const year = date.getFullYear().toString().slice(-2);
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            return `TRN${year}${month}${day}${random}`;
+        }
+    </script>
+</body>
+</html>

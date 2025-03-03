@@ -1,0 +1,158 @@
+/* Professional Banking App Styles */
+:root {
+  --primary-color: #003b70;
+  --primary-dark: #002d57;
+  --primary-light: #e6f0fa;
+  --secondary-color: #0a6640;
+  --secondary-dark: #08512f;
+  --text-dark: #212529;
+  --text-medium: #495057;
+  --text-light: #6c757d;
+  --border-color: #e0e0e0;
+  --background-light: #f8f9fa;
+  --background-white: #ffffff;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text-dark);
+  background-color: #f5f7f9;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#root {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.app-container {
+  flex: 1;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.print-forms-container {
+  background-color: var(--background-white);
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+  margin-top: 2rem;
+}
+
+.print-forms-header {
+  color: var(--primary-color);
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--primary-color);
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.print-forms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.back-button {
+  display: block;
+  margin: 0 auto;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.85rem 2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: 0.3px;
+  font-size: 1rem;
+}
+
+.back-button:hover {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.back-button:active {
+  transform: translateY(0);
+}
+
+/* Document card styling */
+.document-card {
+  background-color: var(--background-white);
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+.document-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+
+.document-card-header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1.25rem;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.document-card-body {
+  padding: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .print-forms-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .print-forms-container {
+    padding: 1.5rem;
+  }
+  
+  .print-forms-header {
+    font-size: 1.6rem;
+  }
+  
+  .app-container {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-container {
+    padding: 1rem;
+  }
+  
+  .back-button {
+    width: 100%;
+  }
+}
+
+/* Remove default Vite styles that aren't needed */
+.logo, .card, .read-the-docs {
+  display: none;
+}

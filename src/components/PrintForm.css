@@ -1,0 +1,220 @@
+.mainn {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-size: 11.5px;
+    font-weight: bold;
+    font-family: "Courier Prime", monospace;
+}
+
+.main-body {
+    margin: auto;
+}
+
+.print-form form {
+    margin: 0;
+    padding: 0;
+}
+
+.form-container {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.form-content {
+    padding: 7px;
+}
+
+/* height: 509.44
+width:  796.15*/
+
+
+.form-body {
+    height: 13.479cm;
+    width: 23.3cm;
+    background-color: white;
+    margin: auto;
+    border: 2px solid white;
+}
+
+.print-form input {
+    border: 2px solid black;
+    padding: 10px;
+}
+
+.first-top-div {
+    margin-top: 17px;
+    display: flex;
+    gap: 2px;
+}
+
+.input-div {
+    position: relative;
+}
+
+.account-input {
+    width: 90px;
+    height: 42px;
+    padding-left: 7px;
+}
+
+.instructiontype-input {
+    display: inline-block;
+    width: 300px;
+    height: 42px;
+    padding-left: 7px;
+}
+
+.gbs-div {
+    position: relative;
+}
+
+.gbsscreen-input {
+    padding-left: 7px;
+    height: 30px;
+    width: 220px;
+}
+
+.gbs-content-div {
+    position: relative;
+    margin-top: 12px;
+}
+
+#signature {
+    margin-top: -25px;
+    margin-left: 4px;
+}
+
+
+/* information box styling */
+.info1 {
+    text-align: left;
+    margin-top: -7px;
+}
+
+.info2 {
+    margin-top: 15px;
+}
+
+.info2-content {
+    width: 239px;
+    border: 2px solid black;
+    padding: 25px;
+    padding-bottom: 25.8px;
+    margin-bottom: 7px;
+}
+
+.reference-div-content1 {
+    margin-top: 5px;
+    text-align: left;
+    width: 370px;
+    border: 2px solid black;
+    padding: 5px;
+    padding-bottom: 8px;
+}
+
+.reference-div-content2 {
+    margin-top: 15px;
+    width: 370px;
+    border: 2px solid black;
+    padding: 10px;
+    padding-bottom: 25.5px;
+}
+
+.refernce-input:focus {
+    outline: none;
+}
+
+.status-div {
+    margin-top: -2px;
+    width: 270px;
+}
+
+#refernce-input {
+    border: 0;
+    height: 10px;
+    margin-top: 4px;
+    margin-left: 4px;
+}
+
+.label-names {
+    position: absolute;
+    top: -15px; 
+    left: 9px; 
+    background-color: white; 
+    padding: 0 3px; 
+    margin: 0; 
+}
+
+.label-names2 {
+    position: absolute;
+    top: -15px; 
+    left: 7px; 
+    background-color: white; 
+    padding: 0 3px; 
+}
+
+.progress-box {
+    width: 160px; 
+    height: 20px; 
+    border: 1px solid #ccc;
+    padding: 1px;
+    overflow: hidden; 
+}
+  
+.progress-bar {
+    width: 0%; 
+    height: 100%;
+    display: flex;
+}
+  
+.progress-box-item {
+    flex: 1;
+    background-color: #034694; 
+    margin: 0 1px;
+    transition: background-color 0.5s ease-in-out; 
+}
+
+.print-form p {
+    margin-left: 2px;
+}
+
+/* Print-specific styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    #printable-content, #printable-content * {
+        visibility: visible;
+    }
+    
+    .print-controls {
+        display: none !important;
+    }
+    
+    .print-form {
+        page-break-after: always;
+        break-after: page;
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .print-form:last-child {
+        page-break-after: auto;
+        break-after: auto;
+    }
+    
+    .form-wrapper {
+        height: 100vh;
+        page-break-after: always;
+        break-after: page;
+    }
+}

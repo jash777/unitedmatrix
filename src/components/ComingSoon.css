@@ -1,0 +1,153 @@
+.coming-soon-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.coming-soon-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 90%;
+  width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  position: relative;
+  animation: slideUp 0.4s ease;
+}
+
+.coming-soon-content {
+  text-align: center;
+}
+
+.coming-soon-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: bounce 2s infinite;
+}
+
+.coming-soon-modal h2 {
+  color: #1a365d;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.coming-soon-modal p {
+  color: #4a5568;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.coming-soon-details {
+  text-align: left;
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+}
+
+.coming-soon-details ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.coming-soon-details li {
+  padding: 0.5rem 0;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+}
+
+.coming-soon-details li::before {
+  content: "→";
+  margin-right: 10px;
+  color: #3182ce;
+}
+
+.close-button {
+  background-color: #1a365d;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background-color: #2c5282;
+  transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .coming-soon-modal {
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  .coming-soon-icon {
+    font-size: 3rem;
+  }
+
+  .coming-soon-modal h2 {
+    font-size: 1.5rem;
+  }
+
+  .coming-soon-modal p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .coming-soon-modal {
+    padding: 1rem;
+  }
+
+  .coming-soon-details {
+    padding: 1rem;
+  }
+
+  .close-button {
+    width: 100%;
+    padding: 0.7rem;
+  }
+} 
