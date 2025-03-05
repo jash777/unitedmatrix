@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './TraceTransaction.css';
+import { API_ENDPOINTS } from '../config/api';
 
 const TraceTransaction = () => {
   const [searchType, setSearchType] = useState('trn');
@@ -19,16 +20,18 @@ const TraceTransaction = () => {
     setError(null);
     setTransactionData(null);
 
+    const requestBody = {
+      type: searchType,
+      value: searchValue.trim()
+    };
+
     try {
-      const response = await fetch('http://127.0.0.1:5005/api/trace', {
+      const response = await fetch(API_ENDPOINTS.TRACE_TRANSACTION, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          type: searchType,
-          value: searchValue.trim()
-        })
+        body: JSON.stringify(requestBody)
       });
 
       const data = await response.json();

@@ -200,6 +200,9 @@
 .detail-value.status-completed {
   color: #38a169;
 }
+.detail-value.status-found {
+  color: #38a169;
+}
 
 .detail-value.status-pending {
   color: #d69e2e;

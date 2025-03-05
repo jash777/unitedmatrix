@@ -237,11 +237,6 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!isSwiftConnected) {
-      alert('Please connect to SWIFT network before proceeding with the payment');
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       // Create a timestamp for the transaction
@@ -256,7 +251,7 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
         // Transaction reference and details
         referencecode: formData.field_20,
         uetr: formData.uetr,
-        uetrcode: formData.uetr, // Add this for PrintForm3
+        uetrcode: formData.uetr,
         instructionType: 'MT103',
         transactionDate: now,
         
@@ -273,7 +268,7 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
         receiverBankAddress: formData.field_57a_2,
         receiverName: formData.field_59_1,
         receiverAccountNumber: formData.field_59_2,
-        receiverAccountName: formData.field_59_1, // Add this for PrintForm3
+        receiverAccountName: formData.field_59_1,
         
         // Transaction details
         currency: formData.field_32a_2,
@@ -290,47 +285,17 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
         // Selected sender info
         selectedSenderInfo: selectedSender,
         
-        // For PrintForm2
-        iban: selectedSender?.IBAN || '',
-        bic: formData.field_57a_3,
-        senderReference: formData.field_50a_1,
-        receiverReference: formData.field_59_1,
-        isohk: hashString(formData.field_20 + now).substring(0, 8).toUpperCase(),
+        // Swift connection status
+        isSwiftConnected: isSwiftConnected,
         
-        // Generate additional fields needed for PrintForm3
+        // Additional fields for tracking
         swiftCoverageInternalNumber: `SCN${Math.floor(Math.random() * 10000000000).toString().padStart(10, '0')}`,
-        confirmedAck: `ACK${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`,
-        debitAuthorized: `DA${Math.floor(Math.random() * 100000).toString().padStart(5, '0')}`,
-        accountDebited: `AD${Math.floor(Math.random() * 100000).toString().padStart(5, '0')}`,
-        
-        // Additional fields for PrintForm3
         messageReference: `MR${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`,
-        networkDeliveryStatus: 'DELIVERED',
+        networkDeliveryStatus: isSwiftConnected ? 'DELIVERED' : 'PENDING',
         prioritydelivery: 'URGENT',
-        messageInputReference: `I${Math.floor(Math.random() * 10000000000).toString().padStart(10, '0')}`,
-        messageOutputReference: `O${Math.floor(Math.random() * 10000000000).toString().padStart(10, '0')}`,
-        trackingCode: `TC${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`,
-        
-        // Additional fields for PrintForm
-        keyedby: 'SYSTEM',
-        keyedbyfulldate: now,
-        releasedby: 'SYSTEM',
-        releasedbyfulldate: now,
-        cancelledby: '',
-        cancelledbyfulldate: now,
-        receivedby: 'SYSTEM',
-        receivedbyfulldate: now,
-        relatedReferenceCode: `REF${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`,
-        recipientcountry: 'INTERNATIONAL',
-        
-        // Add signatures
-        senderSignature: formData.senderSignature,
-        receiverSignature: formData.receiverSignature,
-        bankOfficerSignature: formData.bankOfficerSignature,
-        bankManagerSignature: formData.bankManagerSignature,
       };
       
-      // First save the transaction to the database
+      // Save transaction data
       const saveResponse = await fetch('http://127.0.0.1:5005/api/save-transaction', {
         method: 'POST',
         headers: {
@@ -343,7 +308,7 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
         throw new Error('Failed to save transaction');
       }
 
-      // Then generate the PDF
+      // Generate PDF
       const pdfResponse = await fetch(API_ENDPOINTS.PDF_GENERATOR, {
         method: 'POST',
         headers: {
@@ -361,7 +326,7 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
       // Update transaction context with both transaction data and PDF URL
       setTransactionData({
         ...transactionData,
-        pdfUrl: pdfResult.pdfUrl // Assuming the backend returns the PDF URL
+        pdfUrl: pdfResult.pdfUrl
       });
       
       // Navigate to print page
@@ -490,13 +455,13 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
               </div>
             </div>
 
-            {/* Add the new Swift Connect button */}
+            {/* Optional Swift Connect button */}
             <div className="form-group swift-connect">
               <button 
                 type="button" 
                 className={`swift-connect-btn ${isConnecting ? 'connecting' : ''} ${isSwiftConnected ? 'connected' : ''}`}
                 onClick={handleSwiftConnect}
-                disabled={isConnecting || !selectedSender || isSwiftConnected}
+                disabled={isConnecting}
               >
                 {isConnecting ? (
                   <>
@@ -515,6 +480,12 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
                   </>
                 )}
               </button>
+              {isSwiftConnected && (
+                <div className="swift-status-message">
+                  <i className="fas fa-info-circle"></i>
+                  SWIFT connection established. Your transaction will be processed with priority.
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -826,87 +797,10 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
           </div>
         </div>
         
-        {/* Signatures Section */}
-        <div className="form-row">
-          <div className="form-section">
-            <h3>Left Side</h3>
-            
-            <div className="form-group">
-              <label htmlFor="senderSignature">Left Signature</label>
-              <input 
-                type="file" 
-                id="senderSignature" 
-                accept="image/*"
-                onChange={(e) => handleSignatureUpload(e, 'senderSignature')} 
-              />
-              {formData.senderSignature && (
-                <img 
-                  src={formData.senderSignature} 
-                  alt="Left Signature" 
-                  style={{ maxWidth: '150px', height: '60px', objectFit: 'contain', marginTop: '10px' }} 
-                />
-              )}
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="bankOfficerSignature">Left Stamp</label>
-              <input 
-                type="file" 
-                id="bankOfficerSignature" 
-                accept="image/*"
-                onChange={(e) => handleSignatureUpload(e, 'bankOfficerSignature')} 
-              />
-              {formData.bankOfficerSignature && (
-                <img 
-                  src={formData.bankOfficerSignature} 
-                  alt="Left Stamp" 
-                  style={{ maxWidth: '150px', height: '80px', objectFit: 'contain', marginTop: '10px' }} 
-                />
-              )}
-            </div>
-          </div>
-          
-          <div className="form-section">
-            <h3>Right Side</h3>
-            
-            <div className="form-group">
-              <label htmlFor="receiverSignature">Right Signature</label>
-              <input 
-                type="file" 
-                id="receiverSignature" 
-                accept="image/*"
-                onChange={(e) => handleSignatureUpload(e, 'receiverSignature')} 
-              />
-              {formData.receiverSignature && (
-                <img 
-                  src={formData.receiverSignature} 
-                  alt="Right Signature" 
-                  style={{ maxWidth: '150px', height: '60px', objectFit: 'contain', marginTop: '10px' }} 
-                />
-              )}
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="bankManagerSignature">Right Stamp</label>
-              <input 
-                type="file" 
-                id="bankManagerSignature" 
-                accept="image/*"
-                onChange={(e) => handleSignatureUpload(e, 'bankManagerSignature')} 
-              />
-              {formData.bankManagerSignature && (
-                <img 
-                  src={formData.bankManagerSignature} 
-                  alt="Right Stamp" 
-                  style={{ maxWidth: '150px', height: '80px', objectFit: 'contain', marginTop: '10px' }} 
-                />
-              )}
-            </div>
-          </div>
-        </div>
-        
         <div className="form-actions">
-          <button type="submit" className="submit-button">MAKE A PAYMENT NOW!</button>
+          <button type="submit" className="submit-button">
+            {isSwiftConnected ? 'MAKE SWIFT PAYMENT NOW!' : 'MAKE PAYMENT NOW!'}
+          </button>
         </div>
       </form>
 

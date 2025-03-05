@@ -5,6 +5,8 @@ export const API_ENDPOINTS = {
     PDF_GENERATOR: `${API_BASE_URL}/api/pdf-generator`,
     PDF_LOGS: `${API_BASE_URL}/api/pdf-logs`,
     ACCOUNTS: `${API_BASE_URL}/api/accounts`,
+    TRACE_TRANSACTION: `${API_BASE_URL}/api/trace`,
+    SAVE_TRANSACTION: `${API_BASE_URL}/api/save-transaction`,
 };
 
 export default API_ENDPOINTS; 

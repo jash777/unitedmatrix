@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTransaction } from '../context/transactionContext';
 import './Signatures.css';
+import { Document, Page } from 'react-pdf';
+import '../utils/pdfWorker'; // Import the worker configuration
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
 
 const Signatures = () => {
   const transactionData = useTransaction();
@@ -28,51 +32,67 @@ const Signatures = () => {
   const [processedPdfUrl, setProcessedPdfUrl] = useState(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const fileInputRef = useRef(null);
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [scale, setScale] = useState(1.0);
+  const [pdfError, setPdfError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const previewRef = useRef(null);
 
-  // Handle PDF upload
-  const handlePdfUpload = (event) => {
+  // Function to handle successful PDF load
+  const onDocumentLoadSuccess = ({ numPages }) => {
+    setNumPages(numPages);
+  };
+
+  // Handle PDF preview with PDF.js
+  const handlePdfUpload = async (event) => {
     const file = event.target.files[0];
-    console.log('File selected:', file);
+    setPdfError(null);
+    setIsLoading(true);
 
-    if (file) {
-      if (file.type === 'application/pdf') {
-        const reader = new FileReader();
-        
-        reader.onload = (e) => {
-          console.log('PDF loaded successfully');
-          const pdfDataUrl = e.target.result;
-          console.log('PDF data URL length:', pdfDataUrl.length);
-          
-          setPdfFile(file);
-          setPdfPreview(pdfDataUrl);
-          
-          // Reset positions when new PDF is uploaded
-          setPositions({});
-        };
-
-        reader.onerror = (error) => {
-          console.error('Error reading PDF:', error);
-          alert('Error reading PDF file');
-        };
-
-        reader.readAsDataURL(file);
-      } else {
-        console.error('Invalid file type:', file.type);
-        alert('Please upload a valid PDF file');
+    try {
+      if (!file) {
+        throw new Error('No file selected');
       }
-    } else {
-      console.error('No file selected');
-      alert('Please select a PDF file');
+
+      if (file.type !== 'application/pdf') {
+        throw new Error('Please upload a valid PDF file');
+      }
+
+      // Create array buffer from file
+      const arrayBuffer = await file.arrayBuffer();
+      const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+      const fileUrl = URL.createObjectURL(blob);
+      
+      setPdfFile(file);
+      setPdfPreview(fileUrl);
+      setPageNumber(1);
+      
+    } catch (error) {
+      console.error('PDF Upload Error:', error);
+      setPdfError(error.message);
+      setPdfFile(null);
+      setPdfPreview(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Handle signature and stamp uploads
+  // Improved file upload handler for signatures and stamps
   const handleFileUpload = (e, type) => {
     const file = e.target.files[0];
-    if (file) {
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file (PNG, JPG, etc.)');
+      return;
+    }
+
       const reader = new FileReader();
-      reader.onloadend = () => {
-        if (type.includes('stamp')) {
+    reader.onload = () => {
+      if (type.includes('Stamp')) {
           setStamps(prev => ({
             ...prev,
             [type.replace('Stamp', '')]: reader.result
@@ -85,50 +105,70 @@ const Signatures = () => {
         }
       };
       reader.readAsDataURL(file);
-    }
   };
 
   const handleDragStart = (e, element) => {
     e.preventDefault();
+    const elementRect = e.currentTarget.getBoundingClientRect();
+    const containerRect = previewRef.current.getBoundingClientRect();
+
+    setDragOffset({
+      x: e.clientX - elementRect.left,
+      y: e.clientY - elementRect.top
+    });
+
     setIsDragging(true);
     setSelectedElement(element);
-    
-    const elementRect = e.currentTarget.getBoundingClientRect();
-    const containerRect = e.currentTarget.parentElement.getBoundingClientRect();
-    
-    setPositions(prev => ({
-      ...prev,
-      [element]: {
-        x: elementRect.left - containerRect.left,
-        y: elementRect.top - containerRect.top
-      }
-    }));
   };
 
-  const handleDrag = (e) => {
-    if (isDragging && selectedElement) {
-      e.preventDefault();
-      
-      const container = e.currentTarget;
-      const containerRect = container.getBoundingClientRect();
-      
-      const newX = e.clientX - containerRect.left;
-      const newY = e.clientY - containerRect.top;
-      
-      setPositions(prev => ({
-        ...prev,
-        [selectedElement]: {
-          x: newX,
-          y: newY
-        }
-      }));
-    }
+  const handleDragMove = (e) => {
+    if (!isDragging || !selectedElement || !previewRef.current) return;
+
+    const containerRect = previewRef.current.getBoundingClientRect();
+    const scrollTop = previewRef.current.scrollTop;
+    
+    // Calculate new position relative to container
+    const newX = e.clientX - containerRect.left - dragOffset.x;
+    const newY = e.clientY - containerRect.top - dragOffset.y + scrollTop;
+
+    // Update positions with boundaries
+    setPositions(prev => ({
+      ...prev,
+      [selectedElement]: {
+        x: Math.max(0, Math.min(newX, containerRect.width)),
+        y: Math.max(0, newY)
+      }
+    }));
   };
 
   const handleDragEnd = () => {
     setIsDragging(false);
     setSelectedElement(null);
   };
+
+  // Add mouse move and up listeners
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isDragging) {
+        e.preventDefault();
+        handleDragMove(e);
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isDragging) {
+        handleDragEnd();
+      }
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, selectedElement]);
 
   const handleProcessPDF = async () => {
     if (!pdfFile) {
@@ -209,6 +249,16 @@ const Signatures = () => {
     }
   };
 
+  // Zoom controls
+  const handleZoom = (delta) => {
+    setScale(prevScale => Math.max(0.5, Math.min(2.0, prevScale + delta)));
+  };
+
+  // Page navigation
+  const changePage = (offset) => {
+    setPageNumber(prevPageNumber => Math.max(1, Math.min(numPages, prevPageNumber + offset)));
+  };
+
   useEffect(() => {
     console.log('PDF Preview state changed:', {
       hasPdfFile: !!pdfFile,
@@ -216,6 +266,16 @@ const Signatures = () => {
       previewType: pdfPreview ? typeof pdfPreview : 'null'
     });
   }, [pdfPreview, pdfFile]);
+
+  // Cleanup function to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      // Cleanup object URL when component unmounts or when preview changes
+      if (pdfPreview) {
+        URL.revokeObjectURL(pdfPreview);
+      }
+    };
+  }, [pdfPreview]);
 
   return (
     <div className="signatures-page">
@@ -253,57 +313,127 @@ const Signatures = () => {
             </div>
 
             <h3>Upload Signatures</h3>
-            <div className="upload-section">
+            <div className="upload-section signatures-grid">
               <div className="upload-item">
-                <label>Sender Signature</label>
+                <label htmlFor="sender-signature" className="upload-label">
+                  <span>Sender Signature</span>
+                  <div className="upload-placeholder">
+                    {signatures.sender ? (
+                      <img src={signatures.sender} alt="Sender Signature" />
+                    ) : (
+                      <i className="fas fa-plus"></i>
+                    )}
+                  </div>
+                </label>
                 <input
                   type="file"
+                  id="sender-signature"
                   accept="image/*"
                   onChange={(e) => handleFileUpload(e, 'sender')}
+                  style={{ display: 'none' }}
                 />
               </div>
+
               <div className="upload-item">
-                <label>Receiver Signature</label>
+                <label htmlFor="receiver-signature" className="upload-label">
+                  <span>Receiver Signature</span>
+                  <div className="upload-placeholder">
+                    {signatures.receiver ? (
+                      <img src={signatures.receiver} alt="Receiver Signature" />
+                    ) : (
+                      <i className="fas fa-plus"></i>
+                    )}
+                  </div>
+                </label>
                 <input
                   type="file"
+                  id="receiver-signature"
                   accept="image/*"
                   onChange={(e) => handleFileUpload(e, 'receiver')}
+                  style={{ display: 'none' }}
                 />
               </div>
+
               <div className="upload-item">
-                <label>Bank Officer Signature</label>
+                <label htmlFor="bankOfficer-signature" className="upload-label">
+                  <span>Bank Officer Signature</span>
+                  <div className="upload-placeholder">
+                    {signatures.bankOfficer ? (
+                      <img src={signatures.bankOfficer} alt="Bank Officer Signature" />
+                    ) : (
+                      <i className="fas fa-plus"></i>
+                    )}
+                  </div>
+                </label>
                 <input
                   type="file"
+                  id="bankOfficer-signature"
                   accept="image/*"
                   onChange={(e) => handleFileUpload(e, 'bankOfficer')}
+                  style={{ display: 'none' }}
                 />
               </div>
+
               <div className="upload-item">
-                <label>Bank Manager Signature</label>
+                <label htmlFor="bankManager-signature" className="upload-label">
+                  <span>Bank Manager Signature</span>
+                  <div className="upload-placeholder">
+                    {signatures.bankManager ? (
+                      <img src={signatures.bankManager} alt="Bank Manager Signature" />
+                    ) : (
+                      <i className="fas fa-plus"></i>
+                    )}
+                  </div>
+                </label>
                 <input
                   type="file"
+                  id="bankManager-signature"
                   accept="image/*"
                   onChange={(e) => handleFileUpload(e, 'bankManager')}
+                  style={{ display: 'none' }}
                 />
               </div>
             </div>
 
             <h3>Upload Stamps</h3>
-            <div className="upload-section">
+            <div className="upload-section stamps-grid">
               <div className="upload-item">
-                <label>Bank Officer Stamp</label>
+                <label htmlFor="bankOfficer-stamp" className="upload-label">
+                  <span>Bank Officer Stamp</span>
+                  <div className="upload-placeholder">
+                    {stamps.bankOfficer ? (
+                      <img src={stamps.bankOfficer} alt="Bank Officer Stamp" />
+                    ) : (
+                      <i className="fas fa-plus"></i>
+                    )}
+                  </div>
+                </label>
                 <input
                   type="file"
+                  id="bankOfficer-stamp"
                   accept="image/*"
                   onChange={(e) => handleFileUpload(e, 'bankOfficerStamp')}
+                  style={{ display: 'none' }}
                 />
               </div>
+
               <div className="upload-item">
-                <label>Bank Manager Stamp</label>
+                <label htmlFor="bankManager-stamp" className="upload-label">
+                  <span>Bank Manager Stamp</span>
+                  <div className="upload-placeholder">
+                    {stamps.bankManager ? (
+                      <img src={stamps.bankManager} alt="Bank Manager Stamp" />
+                    ) : (
+                      <i className="fas fa-plus"></i>
+                    )}
+                  </div>
+                </label>
                 <input
                   type="file"
+                  id="bankManager-stamp"
                   accept="image/*"
                   onChange={(e) => handleFileUpload(e, 'bankManagerStamp')}
+                  style={{ display: 'none' }}
                 />
               </div>
             </div>
@@ -312,8 +442,40 @@ const Signatures = () => {
           <div className="preview-panel">
             <div className="preview-header">
               <h3>PDF Preview</h3>
-              {pdfFile && (
+              {pdfFile && !pdfError && (
                 <div className="preview-controls">
+                  <div className="zoom-controls">
+                    <button 
+                      onClick={() => setScale(prev => Math.max(0.5, prev - 0.1))}
+                      disabled={scale <= 0.5}
+                    >
+                      <i className="fas fa-search-minus"></i>
+                    </button>
+                    <span>{Math.round(scale * 100)}%</span>
+                    <button 
+                      onClick={() => setScale(prev => Math.min(2, prev + 0.1))}
+                      disabled={scale >= 2}
+                    >
+                      <i className="fas fa-search-plus"></i>
+                    </button>
+                  </div>
+                  {numPages > 1 && (
+                    <div className="page-controls">
+                      <button 
+                        onClick={() => setPageNumber(prev => Math.max(1, prev - 1))}
+                        disabled={pageNumber <= 1}
+                      >
+                        <i className="fas fa-chevron-left"></i>
+                      </button>
+                      <span>Page {pageNumber} of {numPages}</span>
+                      <button 
+                        onClick={() => setPageNumber(prev => Math.min(numPages, prev + 1))}
+                        disabled={pageNumber >= numPages}
+                      >
+                        <i className="fas fa-chevron-right"></i>
+                      </button>
+                    </div>
+                  )}
                   <button 
                     className="process-btn"
                     onClick={handleProcessPDF}
@@ -335,71 +497,125 @@ const Signatures = () => {
               )}
             </div>
 
-            <div className="pdf-preview-container">
-              {pdfPreview ? (
+            <div className="pdf-preview-container" ref={previewRef}>
+              {isLoading ? (
+                <div className="pdf-loading">
+                  <div className="spinner"></div>
+                  <p>Loading PDF...</p>
+                </div>
+              ) : pdfError ? (
+                <div className="pdf-error">
+                  <i className="fas fa-exclamation-circle"></i>
+                  <p>{pdfError}</p>
+                </div>
+              ) : pdfPreview ? (
                 <div className="pdf-viewer">
-                  <div className="pdf-frame">
-                    <embed
-                      src={pdfPreview}
-                      type="application/pdf"
-                      className="pdf-iframe"
+                  <Document
+                    file={pdfPreview}
+                    onLoadSuccess={({ numPages }) => {
+                      setNumPages(numPages);
+                      setPdfError(null);
+                    }}
+                    onLoadError={(error) => {
+                      console.error('PDF Load Error:', error);
+                      setPdfError('Failed to load PDF. Please try again.');
+                    }}
+                    loading={
+                      <div className="pdf-loading">
+                        <div className="spinner"></div>
+                        <p>Loading PDF...</p>
+                      </div>
+                    }
+                  >
+                    <Page
+                      pageNumber={pageNumber}
+                      scale={scale}
+                      renderTextLayer={false}
+                      renderAnnotationLayer={false}
+                      loading={
+                        <div className="page-loading">
+                          <div className="spinner"></div>
+                        </div>
+                      }
                     />
-                  </div>
-                  <div className="scroll-controls">
-                    <button 
-                      className="scroll-btn scroll-up"
-                      onClick={() => handleScroll('up')}
-                      aria-label="Scroll up"
-                    >
-                      <i className="fas fa-chevron-up"></i>
-                    </button>
-                    <button 
-                      className="scroll-btn scroll-down"
-                      onClick={() => handleScroll('down')}
-                      aria-label="Scroll down"
-                    >
-                      <i className="fas fa-chevron-down"></i>
-                    </button>
-                  </div>
-                  <div className="signatures-layer">
+                  </Document>
+                  <div className="signatures-overlay">
                     {Object.entries(signatures).map(([key, value]) => (
                       value && (
                         <div
                           key={key}
                           className={`signature-element ${isDragging && selectedElement === key ? 'dragging' : ''}`}
                           style={{
-                            left: `${positions[key].x}px`,
-                            top: `${positions[key].y}px`,
+                            left: `${positions[key]?.x || 0}px`,
+                            top: `${positions[key]?.y || 0}px`,
                             cursor: 'move',
                             position: 'absolute',
-                            transform: 'translate(-50%, -50%)',
-                            zIndex: isDragging && selectedElement === key ? 1000 : 10
+                            transform: 'translate(0, 0)',
+                            zIndex: isDragging && selectedElement === key ? 1000 : 10,
+                            touchAction: 'none'
                           }}
-                          draggable="false"
                           onMouseDown={(e) => handleDragStart(e, key)}
+                          onTouchStart={(e) => {
+                            const touch = e.touches[0];
+                            handleDragStart({
+                              preventDefault: () => {},
+                              clientX: touch.clientX,
+                              clientY: touch.clientY,
+                              currentTarget: e.currentTarget
+                            }, key);
+                          }}
                         >
-                          <img src={value} alt={`${key} signature`} />
+                          <img 
+                            src={value} 
+                            alt={`${key} signature`}
+                            style={{
+                              maxWidth: '150px',
+                              maxHeight: '60px',
+                              userSelect: 'none',
+                              pointerEvents: 'none'
+                            }}
+                            draggable="false"
+                          />
                         </div>
                       )
                     ))}
-                    
+
                     {Object.entries(stamps).map(([key, value]) => (
                       value && (
                         <div
                           key={key}
                           className={`stamp-element ${isDragging && selectedElement === key ? 'dragging' : ''}`}
                           style={{
-                            left: `${positions[key].x}px`,
-                            top: `${positions[key].y}px`,
+                            left: `${positions[key]?.x || 0}px`,
+                            top: `${positions[key]?.y || 0}px`,
                             cursor: 'move',
                             position: 'absolute',
-                            transform: 'translate(-50%, -50%)',
-                            zIndex: isDragging && selectedElement === key ? 1000 : 10
+                            transform: 'translate(0, 0)',
+                            zIndex: isDragging && selectedElement === key ? 1000 : 10,
+                            touchAction: 'none'
                           }}
-                          draggable="false"
                           onMouseDown={(e) => handleDragStart(e, key)}
+                          onTouchStart={(e) => {
+                            const touch = e.touches[0];
+                            handleDragStart({
+                              preventDefault: () => {},
+                              clientX: touch.clientX,
+                              clientY: touch.clientY,
+                              currentTarget: e.currentTarget
+                            }, key);
+                          }}
                         >
-                          <img src={value} alt={`${key} stamp`} />
+                          <img 
+                            src={value} 
+                            alt={`${key} stamp`}
+                            style={{
+                              maxWidth: '150px',
+                              maxHeight: '80px',
+                              userSelect: 'none',
+                              pointerEvents: 'none'
+                            }}
+                            draggable="false"
+                          />
                         </div>
                       )
                     ))}
