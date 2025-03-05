@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Transfer System - Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="login-page">
+    <div class="login-header">
+        <img src="https://i.ibb.co/PvzbGtwH/banklogo.png" alt="Bank Logo" class="login-logo">
+    </div>
+
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Secure Access</h2>
+            <p class="login-subtitle">Enter your 6-digit PIN to access the transfer system</p>
+            
+            <form id="pinForm" class="pin-form">
+                <div class="pin-input-container">
+                    <input type="password" maxlength="1" class="pin-input" required>
+                    <input type="password" maxlength="1" class="pin-input" required>
+                    <input type="password" maxlength="1" class="pin-input" required>
+                    <input type="password" maxlength="1" class="pin-input" required>
+                    <input type="password" maxlength="1" class="pin-input" required>
+                    <input type="password" maxlength="1" class="pin-input" required>
+                </div>
+                
+                <div class="error-message" id="errorMessage"></div>
+                
+                <button type="submit" class="login-button">
+                    <i class="fas fa-lock"></i> Access System
+                </button>
+            </form>
+
+            <div class="security-info">
+                <i class="fas fa-shield-alt"></i>
+                <p>This is a secure 256-bit SSL encrypted connection</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="login-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Security</h4>
+                <ul>
+                    <li><i class="fas fa-shield-alt"></i> 256-bit SSL Encryption</li>
+                    <li><i class="fas fa-lock"></i> Secure Access</li>
+                    <li><i class="fas fa-user-shield"></i> Protected System</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><i class="fas fa-phone"></i> 24/7 Assistance</li>
+                    <li><i class="fas fa-envelope"></i> Email Support</li>
+                    <li><i class="fas fa-question-circle"></i> FAQ</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><i class="fas fa-gavel"></i> Terms of Service</li>
+                    <li><i class="fas fa-user-privacy"></i> Privacy Policy</li>
+                    <li><i class="fas fa-file-contract"></i> Compliance</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Bank Transfer System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="login.js"></script>
+</body>
+</html> 

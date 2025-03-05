@@ -8,10 +8,47 @@ const Navbar = ({ userName = "John Smith", userRole = "Senior Transfer Officer",
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeTransferType, setActiveTransferType] = useState('mt103');
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [selectedTransferType, setSelectedTransferType] = useState('');
-  
+  const [activeCategory, setActiveCategory] = useState('swift');
+
+  const bankingCategories = {
+    swift: {
+      title: 'SWIFT Messages',
+      items: [
+        { id: 'mt103', name: 'MT103 Standard', route: '/mt103' },
+        { id: 'mt103gpi', name: 'MT103 GPI', route: '/mt103gpi' },
+        { id: 'mt103tt', name: 'MT103 TT', route: '/mt103tt' },
+        { id: 'mt103eft', name: 'MT103 EFT', route: '/mt103eft' },
+        { id: 'mt103202', name: 'MT103/202', route: '/mt103202' },
+        { id: 'mt202cov', name: 'MT202 COV', route: '/mt202cov' },
+        { id: 'mt760', name: 'MT760', route: '/mt760' },
+        { id: 'mt110', name: 'MT110', route: '/mt110' },
+        { id: 'mt700', name: 'MT700', route: '/mt700' },
+        { id: 'mt199', name: 'MT199', route: '/mt199' },
+        { id: 'mt799', name: 'MT799', route: '/mt799' },
+        { id: 'mt999', name: 'MT999', route: '/mt999' }
+      ]
+    },
+    transfers: {
+      title: 'Transfer Systems',
+      items: [
+        { id: 'ledger', name: 'Ledger to Ledger', route: '/ledger' },
+        { id: 'server', name: 'Server to Server', route: '/server' },
+        { id: 'dropbox', name: 'Dropbox Uploader', route: '/dropbox' }
+      ]
+    },
+    monitoring: {
+      title: 'Monitoring & Tracking',
+      items: [
+        { id: 'tracing', name: 'Advanced Tracing System', route: '/tracing' },
+        { id: 'tracking', name: 'Global Transaction Tracking', route: '/tracking' },
+        { id: 'blackscreen', name: 'Blackscreen Monitor', route: '/blackscreen' },
+        { id: 'interbank', name: 'Interbank Screen', route: '/interbank' }
+      ]
+    }
+  };
+
   // Update time every minute
   useEffect(() => {
     const timer = setInterval(() => {
@@ -21,7 +58,7 @@ const Navbar = ({ userName = "John Smith", userRole = "Senior Transfer Officer",
     return () => clearInterval(timer);
   }, []);
   
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isDropdownOpen && !event.target.closest('.bank-user-profile')) {
@@ -35,14 +72,12 @@ const Navbar = ({ userName = "John Smith", userRole = "Senior Transfer Officer",
     };
   }, [isDropdownOpen]);
   
-  // Format time
   const formattedTime = currentTime.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true
   });
   
-  // Handle logout click
   const handleLogoutClick = (e) => {
     e.preventDefault();
     setIsDropdownOpen(false);
@@ -54,21 +89,18 @@ const Navbar = ({ userName = "John Smith", userRole = "Senior Transfer Officer",
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-  
-  const handleTransferTypeClick = (type) => {
-    if (type === 'mt103') {
-      setActiveTransferType(type);
-      navigate('/mt103');
+
+  const handleCategoryClick = (category) => {
+    setActiveCategory(category);
+  };
+
+  const handleItemClick = (route) => {
+    if (route === '/mt103') {
+      navigate(route);
     } else {
-      setSelectedTransferType(type.toUpperCase());
+      setSelectedTransferType(route.substring(1).toUpperCase());
       setShowComingSoon(true);
     }
-  };
-  
-  const handleCloseComingSoon = () => {
-    setShowComingSoon(false);
-    setActiveTransferType('mt103');
-    navigate('/mt103');
   };
   
   return (
@@ -90,12 +122,6 @@ const Navbar = ({ userName = "John Smith", userRole = "Senior Transfer Officer",
             <button 
               className="mobile-menu-button"
               onClick={toggleMobileMenu}
-              style={{
-                display: 'none',
-                '@media (max-width: 768px)': {
-                  display: 'block'
-                }
-              }}
             >
               <span className="menu-icon"></span>
             </button>
@@ -105,10 +131,16 @@ const Navbar = ({ userName = "John Smith", userRole = "Senior Transfer Officer",
                 <a href="/dashboard">Dashboard</a>
               </li>
               <li className="bank-nav-item">
-                <a href="/dashboard">Transfer</a>
+                <a href="/transfer-receipts">Transfer Receipts</a>
               </li>
               <li className="bank-nav-item">
                 <a href="/print">Print Receipt</a>
+              </li>
+              <li className="bank-nav-item">
+                <a href="/signatures">Signatures</a>
+              </li>
+              <li className="bank-nav-item">
+                <a href="/trace">Trace Transaction</a>
               </li>
             </ul>
             
@@ -151,65 +183,39 @@ const Navbar = ({ userName = "John Smith", userRole = "Senior Transfer Officer",
           </div>
         </nav>
 
-        {/* Transfer Types Navigation */}
-        <div className="transfer-types-nav">
-          <div className="transfer-types-container">
-            <button 
-              className={`transfer-type-btn ${activeTransferType === 'mt103' ? 'active' : ''}`}
-              onClick={() => handleTransferTypeClick('mt103')}
-            >
-              <span className="transfer-icon">🔄</span>
-              MT103
-            </button>
-
-            <button 
-              className={`transfer-type-btn ${activeTransferType === 'mt199' ? 'active' : ''}`}
-              onClick={() => handleTransferTypeClick('mt199')}
-            >
-              <span className="transfer-icon">📨</span>
-              MT199
-            </button>
-
-            <button 
-              className={`transfer-type-btn ${activeTransferType === 'mt103gpi' ? 'active' : ''}`}
-              onClick={() => handleTransferTypeClick('mt103gpi')}
-            >
-              <span className="transfer-icon">🌐</span>
-              MT103 GPI
-            </button>
-
-            <button 
-              className={`transfer-type-btn ${activeTransferType === 'ledger' ? 'active' : ''}`}
-              onClick={() => handleTransferTypeClick('ledger')}
-            >
-              <span className="transfer-icon">📒</span>
-              Ledger to Ledger
-            </button>
-
-            <button 
-              className={`transfer-type-btn ${activeTransferType === 'dropbox' ? 'active' : ''}`}
-              onClick={() => handleTransferTypeClick('dropbox')}
-            >
-              <span className="transfer-icon">📦</span>
-              DropBox
-            </button>
-
-            <button 
-              className={`transfer-type-btn ${activeTransferType === 'mt103202' ? 'active' : ''}`}
-              onClick={() => handleTransferTypeClick('mt103202')}
-            >
-              <span className="transfer-icon">💱</span>
-              MT103/202
-            </button>
+        <div className="banking-subnav">
+          <div className="banking-subnav-container">
+            <div className="banking-categories">
+              {Object.entries(bankingCategories).map(([key, category]) => (
+                <div key={key} className="banking-category">
+                  <button
+                    className={`category-button ${activeCategory === key ? 'active' : ''}`}
+                    onClick={() => handleCategoryClick(key)}
+                  >
+                    {category.title}
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="transfer-types-container">
+              {bankingCategories[activeCategory].items.map((item) => (
+                <button
+                  key={item.id}
+                  className="transfer-type-btn"
+                  onClick={() => handleItemClick(item.route)}
+                >
+                  {item.name}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Coming Soon Popup */}
       {showComingSoon && (
         <ComingSoon 
           transferType={selectedTransferType}
-          onClose={handleCloseComingSoon}
+          onClose={() => setShowComingSoon(false)}
         />
       )}
     </>

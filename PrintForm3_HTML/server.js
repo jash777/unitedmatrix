@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3001;
 
 // CORS configuration
 const corsOptions = {
-  origin: ['http://app.unitedmatrix.org', 'https://app.unitedmatrix.org' ,'http://localhost:5173', 'http://192.168.1.5:5173' ,'http://127.0.0.1:5500'],
+  origin: ['http://app.unitedmatrix.org', 'https://app.unitedmatrix.org' ,'http://localhost:5173', 'http://192.168.1.5:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true,

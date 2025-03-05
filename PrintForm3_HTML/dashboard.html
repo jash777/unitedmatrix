@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MT103 SWIFT Transfer Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Enhanced Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <img src="https://i.ibb.co/VWRq514t/unitedlogo.png" alt="United Matrix Bank" class="nav-logo">
+        </div>
+        <div class="nav-center">
+            <ul class="nav-menu">
+                <li><a href="#" class="active"><i class="fas fa-exchange-alt"></i> Transfers</a></li>
+                <li><button type="button" class="print-preview-btn"><i class="fas fa-print"></i> Print Preview</button></li>
+                <li><a href="#"><i class="fas fa-history"></i> History</a></li>
+                <li><a href="#"><i class="fas fa-file-alt"></i> Reports</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <div class="status-indicators">
+                <div class="status-item">
+                    <i class="fas fa-signal"></i>
+                    <span class="status-label">SWIFT Network</span>
+                    <span class="status-badge active">Active</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-server"></i>
+                    <span class="status-label">Server</span>
+                    <span class="status-badge active">Online</span>
+                </div>
+            </div>
+            <div class="user-profile">
+                <div class="user-info">
+                    <div class="user-details">
+                        <span class="user-name">Mark</span>
+                        <span class="user-role">Senior Bank Officer</span>
+                    </div>
+                    <div class="user-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                </div>
+                <div class="user-actions">
+                    <!-- <a href="#" class="action-link"><i class="fas fa-user-cog"></i> Profile</a> -->
+                    <a href="login.html" class="action-link logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Secondary Navigation Bar -->
+    <div class="secondary-nav">
+        <div class="breadcrumb-container">
+            <i class="fas fa-home"></i>
+            <span class="breadcrumb-separator">/</span>
+            <span>Dashboard</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="current">New Transfer</span>
+        </div>
+        <div class="quick-actions">
+            <button class="quick-action-btn">
+                <i class="fas fa-plus"></i> New Transfer
+            </button>
+            <button class="quick-action-btn">
+                <i class="fas fa-search"></i> Track Transfer
+            </button>
+            <button class="quick-action-btn">
+                <i class="fas fa-download"></i> Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1><i class="fas fa-exchange-alt"></i> MT103 SWIFT Transfer</h1>
+            <p class="breadcrumb">Dashboard > New Transfer</p>
+        </div>
+
+        <div class="swift-mt103-form">
+            <form id="mt103Form">
+                <!-- Sender Information Section -->
+                <div class="form-row">
+                    <div class="form-section">
+                        <h3><i class="fas fa-user-circle"></i> Sender Information</h3>
+                        <div class="form-group">
+                            <label for="senderSelect">Select Sender Account</label>
+                            <select id="senderSelect" name="senderSelect" required>
+                                <option value="">-- Select Sender Account --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="senderName">Sender Name</label>
+                            <input type="text" id="senderName" name="senderName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="senderAccountNumber">Account Number</label>
+                            <input type="text" id="senderAccountNumber" name="senderAccountNumber" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="senderBankName">Bank Name</label>
+                            <input type="text" id="senderBankName" name="senderBankName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="senderBankAddress">Bank Address</label>
+                            <input type="text" id="senderBankAddress" name="senderBankAddress" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="senderSwiftCode">SWIFT Code</label>
+                            <input type="text" id="senderSwiftCode" name="senderSwiftCode" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Transaction Details Section -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-money-check-alt"></i> Transaction Details</h3>
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" id="amount" name="amount" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="currency">Currency</label>
+                            <input type="text" id="currency" name="currency" placeholder="EUR">
+                        </div>
+                        <div class="form-group">
+                            <label for="valueDate">Value Date</label>
+                            <input type="date" id="valueDate" name="valueDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="instructionType">Instruction Type</label>
+                            <input type="text" id="instructionType" name="instructionType" value="MT103" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Receiver Information Section -->
+                <div class="form-row">
+                    <div class="form-section">
+                        <h3><i class="fas fa-user-alt"></i> Receiver Information</h3>
+                        <div class="form-group">
+                            <label for="receiverName">Receiver Name</label>
+                            <input type="text" id="receiverName" name="receiverName">
+                        </div>
+                        <div class="form-group">
+                            <label for="receiverAddress">Receiver Address</label>
+                            <input type="text" id="receiverAddress" name="receiverAddress">
+                        </div>
+                        <div class="form-group">
+                            <label for="receiverAccountNumber">Account Number</label>
+                            <input type="text" id="receiverAccountNumber" name="receiverAccountNumber">
+                        </div>
+                        <div class="form-group">
+                            <label for="receiverBankName">Bank Name</label>
+                            <input type="text" id="receiverBankName" name="receiverBankName">
+                        </div>
+                        <div class="form-group">
+                            <label for="receiverBankAddress">Bank Address</label>
+                            <input type="text" id="receiverBankAddress" name="receiverBankAddress">
+                        </div>
+                        <div class="form-group">
+                            <label for="receiverSwiftCode">SWIFT Code</label>
+                            <input type="text" id="receiverSwiftCode" name="receiverSwiftCode">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-info-circle"></i> Additional Information</h3>
+                        <div class="form-group">
+                            <label for="remittanceInfo">Remittance Information</label>
+                            <input type="text" id="remittanceInfo" name="remittanceInfo" value="INVESTMENT">
+                        </div>
+                        <div class="form-group">
+                            <label for="detailsOfCharges">Details of Charges</label>
+                            <input type="text" id="detailsOfCharges" name="detailsOfCharges" value="OUR">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Signatures Section -->
+                <div class="form-row">
+                    <div class="form-section full-width">
+                        <h3><i class="fas fa-signature"></i> Signatures and Stamps</h3>
+                        <div class="signatures-grid">
+                            <div class="form-group">
+                                <label for="senderSignature">Sender Signature</label>
+                                <input type="file" id="senderSignature" name="senderSignature" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="bankOfficerSignature">Bank Officer Stamp</label>
+                                <input type="file" id="bankOfficerSignature" name="bankOfficerSignature" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="receiverSignature">Receiver Signature</label>
+                                <input type="file" id="receiverSignature" name="receiverSignature" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="bankManagerSignature">Bank Manager Stamp</label>
+                                <input type="file" id="bankManagerSignature" name="bankManagerSignature" accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-button">
+                        <i class="fas fa-paper-plane"></i> GENERATE SWIFT TRANSFER
+                    </button>
+                    <div class="secondary-actions">
+                        <button type="button" class="action-button preview-btn">
+                            <i class="fas fa-print"></i> Print Preview
+                        </button>
+                        <button type="button" class="action-button download-btn">
+                            <i class="fas fa-file-pdf"></i> Download PDF
+                        </button>
+                        <button type="button" class="action-button receipt-btn">
+                            <i class="fas fa-receipt"></i> Download Receipt
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#"><i class="fas fa-exchange-alt"></i> Transfers</a></li>
+                    <li><a href="#"><i class="fas fa-history"></i> History</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> Help Center</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> Contact Support</a></li>
+                    <li><a href="#"><i class="fas fa-phone"></i> 24/7 Assistance</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Security</h4>
+                <ul>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Security Center</a></li>
+                    <li><a href="#"><i class="fas fa-lock"></i> Privacy Policy</a></li>
+                    <li><a href="#"><i class="fas fa-file-contract"></i> Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Bank Transfer System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Print Preview Modal -->
+    <div id="printPreviewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-print"></i> Print Preview</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="preview-actions">
+                    <button id="printBtn" class="preview-btn">
+                        <i class="fas fa-print"></i> Print Document
+                    </button>
+                    <button id="downloadPdfBtn" class="preview-btn">
+                        <i class="fas fa-file-pdf"></i> Download PDF
+                    </button>
+                    <button id="downloadReceiptBtn" class="preview-btn">
+                        <i class="fas fa-receipt"></i> Download Receipt
+                    </button>
+                </div>
+                <div class="print-preview-content">
+                    <!-- Preview content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</body>
+</html>

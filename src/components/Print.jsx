@@ -1,170 +1,82 @@
 import React, { useEffect, useState } from 'react';
 import { useTransaction } from '../context/transactionContext';
-import { PrintForm3 } from './PrintForm3';
-import { PrintForm2 } from './PrintForm2';
-import PrintForm from './PrintForm';
-import { generatePDF } from '../utils/pdfGenerator';
+import { useNavigate } from 'react-router-dom';
+import './Print.css';
 
 const Print = () => {
   const transactionData = useTransaction();
-  const [isPrinting, setIsPrinting] = useState(false);
-  const [selectedForm, setSelectedForm] = useState('form3');
-  
-  // Function to handle printing
-  const handlePrint = async (formType) => {
-    setIsPrinting(true);
-    try {
-      const formElement = document.getElementById(`${formType}-wrapper`);
-      if (!formElement) {
-        throw new Error('Form element not found');
-      }
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [downloadUrl, setDownloadUrl] = useState(null);
 
-      // Call the generatePDF function from pdfGenerator.jsx
-      const success = await generatePDF(formElement, {
-        fileName: `Print_${formType.toUpperCase()}.pdf`,
-        backgroundColor: '#ffffff'
-      });
-
-      if (success) {
-        console.log(`${formType.toUpperCase()} PDF generated successfully`);
-      }
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      // Show user-friendly error message
-      alert(`Failed to generate PDF: ${error.message}. Please try again or contact support if the issue persists.`);
-    } finally {
-      setIsPrinting(false);
+  useEffect(() => {
+    if (!transactionData) {
+      navigate('/');
     }
-  };
-  
-  const styles = {
-    container: {
-      padding: '15px',
-      maxWidth: '1200px',
-      margin: '0 auto',
-      '@media (max-width: 768px)': {
-        padding: '10px'
-      }
-    },
-    controls: {
-      marginBottom: '20px',
-      padding: '15px',
-      backgroundColor: '#f5f5f5',
-      borderRadius: '8px',
-      '@media (max-width: 768px)': {
-        padding: '10px'
-      }
-    },
-    formSelection: {
-      marginBottom: '20px',
-      display: 'flex',
-      gap: '10px',
-      flexWrap: 'wrap',
-      '@media (max-width: 576px)': {
-        flexDirection: 'column'
-      }
-    },
-    button: {
-      flex: 1,
-      minWidth: '100px',
-      padding: '10px 20px',
-      '@media (max-width: 576px)': {
-        width: '100%'
-      }
+  }, [transactionData, navigate]);
+
+  const handleDownload = () => {
+    if (downloadUrl) {
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `transaction-${transactionData.referencecode || 'receipt'}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.controls}>
-        <h2 style={{ color: '#2c3e50', marginBottom: '15px' }}>Transaction Completed Successfully</h2>
-        <p><strong>Reference Code:</strong> {transactionData.referencecode || 'N/A'}</p>
-        <p><strong>Amount:</strong> {transactionData.currency || ''} {transactionData.amount || 'N/A'}</p>
-        
-        <div style={styles.formSelection}>
-          <button
-            onClick={() => setSelectedForm('form1')}
-            style={{
-              ...styles.button,
-              backgroundColor: selectedForm === 'form1' ? '#2980b9' : '#95a5a6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Form 1
-          </button>
-          <button
-            onClick={() => setSelectedForm('form2')}
-            style={{
-              ...styles.button,
-              backgroundColor: selectedForm === 'form2' ? '#2980b9' : '#95a5a6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Form 2
-          </button>
-          <button
-            onClick={() => setSelectedForm('form3')}
-            style={{
-              ...styles.button,
-              backgroundColor: selectedForm === 'form3' ? '#2980b9' : '#95a5a6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Form 3
-          </button>
-        </div>
-        
-        <div className="print-buttons" style={{ marginTop: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <button 
-            onClick={() => handlePrint(selectedForm)} 
-            disabled={isPrinting}
-            style={{ 
-              padding: '10px 20px', 
-              backgroundColor: '#3498db', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '4px', 
-              cursor: isPrinting ? 'not-allowed' : 'pointer',
-              opacity: isPrinting ? 0.7 : 1
-            }}
-          >
-            {isPrinting ? 'Generating PDF...' : `Generate ${selectedForm.toUpperCase()} Receipt`}
-          </button>
-        </div>
-      </div>
-      
-      <div id="printable-content">
-        <div 
-          className="form-wrapper" 
-          id="form1-wrapper" 
-          style={{ display: selectedForm === 'form1' ? 'block' : 'none' }}
-        >
-          <PrintForm />
-        </div>
-        
-        <div 
-          className="form-wrapper" 
-          id="form2-wrapper" 
-          style={{ display: selectedForm === 'form2' ? 'block' : 'none' }}
-        >
-          <PrintForm2 />
-        </div>
-        
-        <div 
-          className="form-wrapper" 
-          id="form3-wrapper" 
-          style={{ display: selectedForm === 'form3' ? 'block' : 'none' }}
-        >
-          <PrintForm3 />
+    <div className="print-page">
+      <div className="print-container">
+        <div className="print-content">
+          <div className="success-icon">
+            <i className="fas fa-check-circle"></i>
+          </div>
+          
+          <h2>Transaction Completed Successfully</h2>
+          
+          <div className="transaction-details">
+            <div className="detail-row">
+              <span className="label">Reference Code</span>
+              <span className="value">{transactionData?.referencecode || 'N/A'}</span>
+            </div>
+            <div className="detail-row">
+              <span className="label">Amount</span>
+              <span className="value">
+                {transactionData?.currency || ''} {transactionData?.amount || 'N/A'}
+              </span>
+            </div>
+            <div className="detail-row">
+              <span className="label">Date</span>
+              <span className="value">
+                {new Date(transactionData?.transactionDate).toLocaleString() || 'N/A'}
+              </span>
+            </div>
+            <div className="detail-row">
+              <span className="label">Status</span>
+              <span className="value status-success">Completed</span>
+            </div>
+          </div>
+
+          <div className="action-buttons">
+            <button 
+              onClick={handleDownload}
+              className="download-btn"
+              disabled={isLoading}
+            >
+              <i className="fas fa-download"></i>
+              Download Receipt
+            </button>
+            <button 
+              onClick={() => navigate('/')}
+              className="new-transaction-btn"
+            >
+              <i className="fas fa-plus"></i>
+              New Transaction
+            </button>
+          </div>
         </div>
       </div>
     </div>

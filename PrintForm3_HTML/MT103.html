@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Form 3</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Additional inline styles to adjust spacing */
+        .page p {
+            margin: 3px 0; /* Reduced margin for paragraphs */
+        }
+        
+        .mt-neg1 {
+            margin-top: -2px; /* Increased negative margin */
+        }
+        
+        .header {
+            margin-bottom: 10px; /* Further reduced header bottom margin */
+        }
+        
+        .signature-section {
+            margin-top: 20px; /* Reduced from 30px */
+        }
+        
+        /* Reduce space between sections */
+        .page > div {
+            margin-bottom: 5px;
+        }
+        
+        /* Adjust barcode size */
+        .barcode-container svg {
+            height: 40px !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="printForm3" class="form3-container">
+        <div class="flex-center">
+            <div>
+                <!-- First page - White background -->
+                <div id="form3-part1">
+                    <div class="page white-page">
+                        <div class="header">
+                            <div class="logo-container">
+                                <div class="logo">
+                                    <img src="https://i.ibb.co/PvzbGtwH/banklogo.png" alt="Bank Logo">
+                                </div>
+                            </div>
+                            <div class="barcode-container">
+                                <div id="barcode1"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p><span>FROM: <span class="ml-40" id="senderSwiftCode"></span><span class="ml-4" id="transactionFullDate"></span></span></p>
+                            <p class="mt-neg1"><span>TO: <span class="ml-52" id="receiverSwiftCode"></span><span class="ml-4" id="transactionFullTime"></span></span></p>
+                        </div>
+
+                        <div>
+                            <p>--------------------------------------------------------------------------------------------------------------</p>
+                        </div>
+
+                        <div class="flex-between">
+                            <p>MESSAGE REFERENCE: <span id="messageReference"></span></p>
+                            <p>CUSTOMER'S COPY</p>
+                        </div>
+
+                        <div>
+                            <p>--------------------------------------------------------------------------------------------------------------</p>
+                        </div>
+
+                        <div>
+                            <p>-----------------------------------------INSTANCE TYPE AND TRANSMISSION---------------------------------------</p>
+                        </div>
+
+                        <div>
+                            <p><span class="font-normal">***</span> <span>NOTIFICATION (TRANSMISSION) OF ORIGINAL SENT TO SWIFT (ACK)</span></p>
+                            <p class="mt-neg1"><span class="font-normal">*** </span> <span>NETWORK DELIVERY STATUS</span><span class="text-white">------</span><span class="mr-2">:</span><span class="uppercase" id="networkDeliveryStatus"></span></p>
+                            <p class="mt-neg1"><span class="font-normal">***</span> <span>PRIORITY/DELIVERY</span><span class="text-white">------------</span><span class="mr-2">:</span><span id="prioritydelivery"></span></p>
+                            <p class="mt-neg1"><span class="font-normal">***</span> <span>MESSAGE INPUT REFERENCE</span><span class="text-white">------</span><span class="mr-2">:</span><span id="messageInputReference"></span></p>
+                            <p class="mt-neg1"><span class="font-normal">***</span> <span>MESSAGE OUTPUT REFERENCE</span><span class="text-white">-----</span><span class="mr-2">:</span><span id="messageOutputReference"></span></p>
+                            <p class="mt-neg1"><span class="font-normal">***</span> <span>MESSAGE UETR PRIVATE CODE</span><span class="text-white">----</span><span class="mr-2">:</span><span id="uetrcode"></span></p>
+                        </div>
+
+                        <div>
+                            <p>--------------------------------------------SWIFT MESSAGE READER----------------------------------------------</p>
+                        </div>
+                        
+                        <div>
+                            <p class="mt-neg1">SWIFT INPUT: <span class="mr-2" id="instructionType"></span></p>
+                            <div>
+                                <p class="mt-neg1">FROM:</p>
+                                <p class="mt-neg1">***SENDER<span class="text-white">-------------</span><span class="mr-2">:</span><span id="senderSwiftCode2"></span></p>
+                                <p class="mt-neg1">***BANK NAME<span class="text-white">----------</span><span class="mr-2">:</span><span id="senderBankName"></span></p>
+                                <p class="mt-neg1">***BANK ADDRESS<span class="text-white">-------</span><span class="mr-2">:</span><span id="senderBankAddress"></span></p>
+                                <p class="mt-neg1">***ACCOUNT NAME<span class="text-white">-------</span><span class="mr-2">:</span><span id="senderAccountName"></span></p>
+                                <p class="mt-neg1">***ACCOUNT NUMBER<span class="text-white">-----</span><span class="mr-2">:</span><span id="senderAccountNumber"></span></p>
+                                <p class="mt-neg1">***SWIFT CODE<span class="text-white">---------</span><span class="mr-2">:</span><span id="senderSwiftCode3"></span></p>
+                            </div>
+                            <div>
+                                <p class="mt-neg1">TO:</p>
+                                <p class="mt-neg1">***BANK NAME<span class="text-white">----------</span><span class="mr-2">:</span><span id="receiverBankName"></span></p>
+                                <div class="flex">
+                                    <p class="mt-neg1 inline">***BANK&nbsp;ADDRESS<span class="text-white">-------</span><span class="mr-2">:</span></p>
+                                    <span class="inline-block" id="receiverBankAddress"></span>
+                                </div>
+                                <p class="mt-neg1">***ACCOUNT NAME<span class="text-white">-------</span><span class="mr-2">:</span><span id="receiverAccountName"></span></p>
+                                <p class="mt-neg1">***ACCOUNT NUMBER<span class="text-white">-----</span><span class="mr-2">:</span><span id="receiverAccountNumber"></span></p>
+                                <p class="mt-neg1">***SWIFT CODE<span class="text-white">---------</span><span class="mr-2">:</span><span id="receiverSwiftCode2"></span></p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p>----------------------------------------------------MESSAGE TEXT----------------------------------------------</p>
+                        </div>
+
+                        <div>
+                            <p class="mt-neg1">*** F20:<span class="text-white">------</span><span>TRANSACTION REFERENCE CODE</span><span class="text-white">---------</span><span class="mr-2">:</span><span id="referencecode"></span></p>
+                            <p class="mt-neg1">*** F21:<span class="text-white">------</span><span>RELATED REFERENCE</span><span class="text-white">------------------</span><span class="mr-2">:</span><span id="relatedReferenceCode"></span></p>
+                            <p class="mt-neg1">*** F32B:<span class="text-white">-----</span><span>BANK OPERATION CODE</span><span class="text-white">----------------</span><span class="mr-2">:</span><span id="bankOperationCode"></span></p>
+                            <p class="mt-neg1">*** F32A:<span class="text-white">-----</span><span>CURRENCY/INSTRUCTED</span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>DATE</span><span class="text-white">-------------------------------</span><span class="mr-2">:</span><span id="transactionFullDate2"></span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>CURRENCY</span><span class="text-white">---------------------------</span><span class="mr-2">:</span><span class="uppercase" id="currency"></span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>AMOUNT</span><span class="text-white">-----------------------------</span><span class="mr-2">:</span><span id="amount"></span></p>
+
+                            <p class="mt-neg1">*** F33B:<span class="text-white">-----</span><span>CURRENCY/ORIGINAL ORDERED AMOUNT</span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>CURRENCY</span><span class="text-white">---------------------------</span><span class="mr-2">:</span><span class="uppercase" id="currency2"></span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>AMOUNT</span><span class="text-white">-----------------------------</span><span class="mr-2">:</span><span id="amount2"></span></p>
+
+                            <p class="mt-neg1">*** F50K:<span class="text-white">-----</span><span>ORDERING CUSTOMER-NAME & ADDRESS</span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>ACCOUNT NUMBER</span><span class="text-white">---------------------</span><span class="mr-2">:</span><span id="senderAccountNumber2"></span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>ACCOUNT NAME</span><span class="text-white">-----------------------</span><span class="mr-2">:</span><span id="senderAccountName2"></span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>ADDRESS</span><span class="text-white">----------------------------</span><span class="mr-2">:</span><span id="senderBankAddress2"></span></p>
+
+                            <p class="mt-neg1">*** F52A:<span class="text-white">-----</span><span>ORDERING INSTITUTION</span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>SENDER</span><span class="text-white">-----------------------------</span><span class="mr-2">:</span><span id="senderSwiftCode4"></span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>BANK NAME</span><span class="text-white">--------------------------</span><span class="mr-2">:</span><span id="senderBankName2"></span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>BANK ADDRESS</span><span class="text-white">-----------------------</span><span class="mr-2">:</span><span id="senderBankAddress3"></span></p>
+
+                            <p class="mt-neg1">*** F57A:<span class="text-white">-----</span><span>ACCOUNT WITH INSTITUTION</span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>RECEIVER SWIFT</span><span class="text-white">---------------------</span><span class="mr-2">:</span><span id="receiverSwiftCode3"></span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>BANK RECEIVER</span><span class="text-white">----------------------</span><span class="mr-2">:</span><span id="receiverBankName2"></span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>RECEIVER BANK ADDRESS</span><span class="text-white">--------------</span><span class="mr-2">:</span><span id="receiverBankAddress2"></span></p>
+
+                            <p class="mt-neg1">*** F59:<span class="text-white">------</span><span>BENEFICIARY CUSTOMER</span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>ACCOUNT NAME</span><span class="text-white">-----------------------</span><span class="mr-2">:</span><span id="receiverName"></span></p>
+                            <p class="mt-neg1"><span class="text-white">--------------</span><span>ACCOUNT NUMBER</span><span class="text-white">---------------------</span><span class="mr-2">:</span><span id="receiverAccountNumber2"></span></p>
+
+                            <p class="mt-neg1">*** F70: <span class="text-white">-----</span><span>REMITTANCE OF INFORMATION</span><span class="text-white">----------</span><span class="mr-2">:</span><span id="remittanceInfo">INVESTMENT</span></p>
+                            <p class="mt-neg1">*** F71A: <span class="text-white">----</span><span>DETAILS OF CHARGES</span><span class="text-white">-----------------</span><span class="mr-2">:</span><span id="detailsOfCharges">OUR</span></p>
+                            <p class="mt-neg1">*** F77B: <span class="text-white">----</span><span>REGULATORY REPORTING</span><span class="text-white">---------------</span><span class="mr-2">:</span></p>
+                            <div class="ml-92 mt-neg1">
+                                <p class="uppercase">
+                                FUNDS ARE CLEAN AND CLEAR, OF NON-CRIMINAL ORIGIN AND ARE PAYABLE IN CASH IMMEDIATELY UPON RECEIPT BY THE BANK.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-2">
+                            <p>------------------------------------------------MESSAGE TRAILER-----------------------------------------------</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <p class="mt-neg1">CHK: <span id="isohk"></span></p>
+                            <p class="mt-neg1">PKI-SIGNATURE: 0</p>
+                            <p class="mt-neg1">TRACKING CODE: <span id="trackingCode"></span></p>
+                        </div>
+
+                        <!-- First page Break here end of first page -->
+                        <div class="page-break-container">
+                            <div class="signature-section">
+                                <div>
+                                </div>
+                                <div class="signature-container">
+                                    <!-- Left side stamp and signature -->
+                                    <div class="signature-left">
+                                        <img id="bankOfficerSignature" class="stamp-image" src="" alt="Left Stamp" style="display: none;">
+                                        <img id="senderSignature" class="signature-image" src="" alt="Left Signature" style="display: none;">
+                                    </div>
+
+                                    <!-- Right side stamp and signature -->
+                                    <div class="signature-right">
+                                        <img id="bankManagerSignature" class="stamp-image" src="" alt="Right Stamp" style="display: none;">
+                                        <img id="receiverSignature" class="signature-image" src="" alt="Right Signature" style="display: none;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second page - White background with INTERVENTIONS -->
+                <div id="form3-part2">
+                    <div class="page white-page">
+                        <div class="header">
+                            <div class="logo-container">
+                                <div class="logo">
+                                    <img src="https://i.ibb.co/PvzbGtwH/banklogo.png" alt="Bank Logo">
+                                </div>
+                            </div>
+                            <div class="barcode-container">
+                                <div id="barcode2"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p>------------------------------------------------INTERVENTIONS------------------------------------------------</p>
+                        </div>
+                        
+                        <div>
+                            <p class="mt-neg1 mr-2 uppercase">CONFIRMED AND RECEIVED</p>
+                            <p class="mt-neg1 mr-2">TRANSACTION STATUS: <span>APPROVED</span></p>
+                            <p class="mt-neg1 mr-2">SWIFT MESSAGE: <span id="instructionType2"></span></p>
+                            <p class="mt-neg1 mr-2">SWIFT COVERAGE: <span>YES</span></p>
+                            <p class="mt-neg1 mr-2">CATEGORY: <span>NETWORK REPORT</span></p>
+                            <p class="mt-neg1 mr-2">CREATION DATE & TIME: <span id="transactionDateTime"></span></p>
+                            <p class="mt-neg1 mr-2">APPLICATION: <span>SWIFT</span></p>
+                            <p class="mt-neg1 mr-2">OPERATION: <span>SYSTEM</span></p>
+                            <p class="mt-neg1 mr-2">RECEIVER: <span id="receiverSwiftCode4"></span></p>
+                            <p class="mt-neg1 mr-2">TEXT: <span id="swiftMessage"></span></p>
+                        </div>
+
+                        <p>--------------------------------------------------------------------------------------------------------------</p>
+
+                        <div class="text-center mt-4">
+                            <p>ANSWERBACK AND ACKNOWLEDGMENT MESSAGE AUTOMATED FILE TRANSFER (AFT) GATEWAY RESPONSE VALIDATION
+                                SERVICE PROVIDER LOG/APPLICATION GENERATED REPORT ACKNOWLEDGMENT AND AUTHENTICATION
+                                ACK/NAG DELIVERY FTA/FTI CONFIRMATION STATEMENT PASS/ACK STATUS
+                            </p>
+                            <br>
+                        </div>
+
+                        <div class="mt-4">
+                            <p>0050 CNT, ------------------------------------------------------------------- VALID</p>
+                            <p>0060 RFF-DTM, --------------------------------------------------------------- VALID</p>
+                            <p>0070 RFF, ------------------------------------------------------------------- VALID</p>
+                            <p>0080 DTM, ------------------------------------------------------------------- VALID</p>
+                            <p>0090 NAD-CTA-COM, ----------------------------------------------------------- VALID</p>
+                            <p>0100 NAD, ------------------------------------------------------------------- VALID</p>
+                            <p>0120 COM, ------------------------------------------------------------------- VALID</p>
+                            <p>0130 ERC-FTX-5G4, ----------------------------------------------------------- VALID</p>
+                            <p>0140 ERC, ------------------------------------------------------------------- VALID</p>
+                            <p>0150 FTX, ------------------------------------------------------------------- VALID</p>
+                            <p>0160 RFF-FTX, --------------------------------------------------------------- VALID</p>
+                            <p>0170 REF, ------------------------------------------------------------------- VALID</p>
+                            <p>0180 FTX, ------------------------------------------------------------------- VALID</p>
+                            <p>0190 UNT, ------------------------------------------------------------------- VALID</p>
+                        </div>
+                                    <br>
+                        <div class="mt-4">
+                            <p class="mt-neg1 mr-2">{XMT DELIVERY REPORT} <span></span></p>
+                            <p class="mt-neg1 mr-2">MESSAGE TYPE: <span id="instructionType3">MT103</span></p>
+                            <p class="mt-neg1 mr-2">PRIORITY: <span>URGENT</span></p>
+                            <p class="mt-neg1 mr-2">RECEIVED: <span id="receiverSwiftCode5"></span></p>
+                            <p class="mt-neg1 mr-2">TRANSACTION REFERENCE NUMBER: <span id="referencecode2"></span></p>
+                            <p class="mt-neg1 mr-2">TRANSACTION STATUS: <span>APPROVED</span></p>
+                            <p class="mt-neg1 mr-2">AMOUNT TRANSFERRED: <span id="amount3"></span></p>
+                            <p class="mt-neg1 mr-2">INPUT-OUTPUT: <span>ACK NAK DUP AUTH</span></p>
+                            <p class="mt-neg1 mr-2">SWIFT COVERAGE INTERNAL NUMBER: <span id="swiftCoverageInternalNumber"></span></p>
+                            <p class="mt-neg1 mr-2">CONFIRMED ACK: <span id="confirmedAck"></span></p>
+                            <p class="mt-neg1 mr-2">DEBIT AUTHORIZED: <span id="debitAuthorized"></span></p>
+                            <p class="mt-neg1 mr-2">ACCOUNT DEBITED: <span id="accountDebited"></span></p>
+                        </div>
+
+                        <div>
+                            <p>---------------------------------------------------CONFIRMED--------------------------------------------------</p>
+                        </div>
+
+                        <div>
+                            <p class="mt-neg1 mr-2">TRANSACTION STATUS: <span>APPROVED</span></p>
+                            <p class="mt-neg1 mr-2">AMOUNT TRANSFERRED: <span id="amount4"></span></p>
+                            <p class="mt-neg1 mr-2">DATE OF EXECUTION: <span id="transactionDateTime2"></span></p>
+                        </div>
+
+                        <div>
+                            <p>-------------------------------------END OF TRANSMISSION------------------------------------------------------</p>
+                        </div>
+                        <div class="signature-section">
+                            <div>
+                            </div>
+                            <div class="signature-container">
+                                <!-- Left side stamp and signature -->
+                                <div class="signature-left">
+                                    <img id="bankOfficerSignature2" class="stamp-image" src="" alt="Left Stamp" style="display: none;">
+                                    <img id="senderSignature2" class="signature-image" src="" alt="Left Signature" style="display: none;">
+                                </div>
+
+                                <!-- Right side stamp and signature -->
+                                <div class="signature-right">
+                                    <img id="bankManagerSignature2" class="stamp-image" src="" alt="Right Stamp" style="display: none;">
+                                    <img id="receiverSignature2" class="signature-image" src="" alt="Right Signature" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Third page - Black background -->
+                <div id="form3-part3">
+                    <div class="page black-page">
+                        <div class="header">
+                            <div class="logo-container">
+                                <div class="logo">
+                                    <img src="https://i.ibb.co/PvzbGtwH/banklogo.png" alt="Bank Logo">
+                                </div>
+                            </div>
+                            <div class="barcode-container">
+                                <div id="barcode3"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p><span>FROM: <span class="ml-40" id="senderSwiftCode3"></span><span class="ml-4" id="transactionFullDate3"></span></span></p>
+                            <p class="mt-neg1"><span>TO: <span class="ml-52" id="receiverSwiftCode6"></span><span class="ml-4" id="transactionFullTime3"></span></span></p>
+                        </div>
+
+                        <div>
+                            <p>--------------------------------------------------------------------------------------------------------------</p>
+                        </div>
+
+                        <div class="flex-between">
+                            <p>MESSAGE REFERENCE: <span id="messageReference3"></span></p>
+                            <p>CUSTOMER'S COPY</p>
+                        </div>
+
+                        <div>
+                            <p>--------------------------------------------------------------------------------------------------------------</p>
+                        </div>
+
+                        <div>
+                            <p>---------------------------------------INSTANCE TYPE AND TRANSMISSION-----------------------------------------</p>
+                        </div>
+
+                        <div>
+                            <p><span class="font-normal">***</span> <span>NOTIFICATION (TRANSMISSION) OF ORIGINAL SENT TO SWIFT (ACK)</span></p>
+                            <p class="mt-neg1"><span class="font-normal">*** </span> <span>NETWORK DELIVERY STATUS</span><span class="text-black">------</span><span class="mr-2">:</span><span class="uppercase" id="networkDeliveryStatus3"></span></p>
+                            <p class="mt-neg1"><span class="font-normal">***</span> <span>PRIORITY/DELIVERY</span><span class="text-black">------------</span><span class="mr-2">:</span><span id="prioritydelivery3"></span></p>
+                            <p class="mt-neg1"><span class="font-normal">***</span> <span>MESSAGE INPUT REFERENCE</span><span class="text-black">------</span><span class="mr-2">:</span><span id="messageInputReference3"></span></p>
+                            <p class="mt-neg1"><span class="font-normal">***</span> <span>MESSAGE OUTPUT REFERENCE</span><span class="text-black">-----</span><span class="mr-2">:</span><span id="messageOutputReference3"></span></p>
+                            <p class="mt-neg1"><span class="font-normal">***</span> <span>MESSAGE UETR PRIVATE CODE</span><span class="text-black">----</span><span class="mr-2">:</span><span id="uetrcode3"></span></p>
+                        </div>
+
+                        <div>
+                            <p>--------------------------------------------SWIFT MESSAGE READER----------------------------------------------</p>
+                        </div>
+                        
+                        <div>
+                            <p class="mt-neg1">SWIFT INPUT: <span class="mr-2" id="instructionType4"></span></p>
+                            <div>
+                                <p class="mt-neg1">FROM:</p>
+                                <p class="mt-neg1">***SENDER<span class="text-black">-------------</span><span class="mr-2">:</span><span id="senderSwiftCode5"></span></p>
+                                <p class="mt-neg1">***BANK NAME<span class="text-black">----------</span><span class="mr-2">:</span><span id="senderBankName3"></span></p>
+                                <p class="mt-neg1">***BANK ADDRESS<span class="text-black">-------</span><span class="mr-2">:</span><span id="senderBankAddress4"></span></p>
+                                <p class="mt-neg1">***ACCOUNT NAME<span class="text-black">-------</span><span class="mr-2">:</span><span id="senderAccountName3"></span></p>
+                                <p class="mt-neg1">***ACCOUNT NUMBER<span class="text-black">-----</span><span class="mr-2">:</span><span id="senderAccountNumber3"></span></p>
+                                <p class="mt-neg1">***SWIFT CODE<span class="text-black">---------</span><span class="mr-2">:</span><span id="senderSwiftCode6"></span></p>
+                            </div>
+                            <div>
+                                <p class="mt-neg1">TO:</p>
+                                <p class="mt-neg1">***BANK NAME<span class="text-black">----------</span><span class="mr-2">:</span><span id="receiverBankName3"></span></p>
+                                <div class="flex">
+                                    <p class="mt-neg1 inline">***BANK&nbsp;ADDRESS<span class="text-black">-------</span><span class="mr-2">:</span></p>
+                                    <span class="inline-block" id="receiverBankAddress3"></span>
+                                </div>
+                                <p class="mt-neg1">***ACCOUNT NAME<span class="text-black">-------</span><span class="mr-2">:</span><span id="receiverAccountName3"></span></p>
+                                <p class="mt-neg1">***ACCOUNT NUMBER<span class="text-black">-----</span><span class="mr-2">:</span><span id="receiverAccountNumber3"></span></p>
+                                <p class="mt-neg1">***SWIFT CODE<span class="text-black">---------</span><span class="mr-2">:</span><span id="receiverSwiftCode7"></span></p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p>----------------------------------------------------MESSAGE TEXT----------------------------------------------</p>
+                        </div>
+
+                        <div>
+                            <p class="mt-neg1">*** F20:<span class="text-black">------</span><span>TRANSACTION REFERENCE CODE</span><span class="text-black">---------</span><span class="mr-2">:</span><span id="referencecode3"></span></p>
+                            <p class="mt-neg1">*** F21:<span class="text-black">------</span><span>RELATED REFERENCE</span><span class="text-black">------------------</span><span class="mr-2">:</span><span id="relatedReferenceCode2"></span></p>
+                            <p class="mt-neg1">*** F32B:<span class="text-black">-----</span><span>BANK OPERATION CODE</span><span class="text-black">----------------</span><span class="mr-2">:</span><span id="bankOperationCode2"></span></p>
+                            <p class="mt-neg1">*** F32A:<span class="text-black">-----</span><span>CURRENCY/INSTRUCTED</span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>DATE</span><span class="text-black">-------------------------------</span><span class="mr-2">:</span><span id="transactionFullDate4"></span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>CURRENCY</span><span class="text-black">---------------------------</span><span class="mr-2">:</span><span class="uppercase" id="currency3"></span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>AMOUNT</span><span class="text-black">-----------------------------</span><span class="mr-2">:</span><span id="amount5"></span></p>
+
+                            <p class="mt-neg1">*** F33B:<span class="text-black">-----</span><span>CURRENCY/ORIGINAL ORDERED AMOUNT</span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>CURRENCY</span><span class="text-black">---------------------------</span><span class="mr-2">:</span><span class="uppercase" id="currency4"></span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>AMOUNT</span><span class="text-black">-----------------------------</span><span class="mr-2">:</span><span id="amount6"></span></p>
+
+                            <p class="mt-neg1">*** F50K:<span class="text-black">-----</span><span>ORDERING CUSTOMER-NAME & ADDRESS</span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>ACCOUNT NUMBER</span><span class="text-black">---------------------</span><span class="mr-2">:</span><span id="senderAccountNumber4"></span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>ACCOUNT NAME</span><span class="text-black">-----------------------</span><span class="mr-2">:</span><span id="senderAccountName4"></span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>ADDRESS</span><span class="text-black">----------------------------</span><span class="mr-2">:</span><span id="senderBankAddress5"></span></p>
+
+                            <p class="mt-neg1">*** F52A:<span class="text-black">-----</span><span>ORDERING INSTITUTION</span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>SENDER</span><span class="text-black">-----------------------------</span><span class="mr-2">:</span><span id="senderSwiftCode7"></span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>BANK NAME</span><span class="text-black">--------------------------</span><span class="mr-2">:</span><span id="senderBankName4"></span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>BANK ADDRESS</span><span class="text-black">-----------------------</span><span class="mr-2">:</span><span id="senderBankAddress6"></span></p>
+
+                            <p class="mt-neg1">*** F57A:<span class="text-black">-----</span><span>ACCOUNT WITH INSTITUTION</span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>RECEIVER SWIFT</span><span class="text-black">---------------------</span><span class="mr-2">:</span><span id="receiverSwiftCode9"></span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>BANK RECEIVER</span><span class="text-black">----------------------</span><span class="mr-2">:</span><span id="receiverBankName4"></span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>RECEIVER BANK ADDRESS</span><span class="text-black">--------------</span><span class="mr-2">:</span><span id="receiverBankAddress4"></span></p>
+
+                            <p class="mt-neg1">*** F59:<span class="text-black">------</span><span>BENEFICIARY CUSTOMER</span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>ACCOUNT NAME</span><span class="text-black">-----------------------</span><span class="mr-2">:</span><span id="receiverName2"></span></p>
+                            <p class="mt-neg1"><span class="text-black">--------------</span><span>ACCOUNT NUMBER</span><span class="text-black">---------------------</span><span class="mr-2">:</span><span id="receiverAccountNumber4"></span></p>
+
+                            <p class="mt-neg1">*** F70: <span class="text-black">-----</span><span>REMITTANCE OF INFORMATION</span><span class="text-black">----------</span><span class="mr-2">:</span><span id="remittanceInfo2">INVESTMENT</span></p>
+                            <p class="mt-neg1">*** F71A: <span class="text-black">----</span><span>DETAILS OF CHARGES</span><span class="text-black">-----------------</span><span class="mr-2">:</span><span id="detailsOfCharges2">OUR</span></p>
+                            <p class="mt-neg1">*** F77B: <span class="text-black">----</span><span>REGULATORY REPORTING</span><span class="text-black">---------------</span><span class="mr-2">:</span></p>
+                            <div class="ml-92 mt-neg1">
+                                <p class="uppercase">
+                                FUNDS ARE CLEAN AND CLEAR, OF NON-CRIMINAL ORIGIN AND ARE PAYABLE IN CASH IMMEDIATELY UPON RECEIPT BY THE BANK.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-2">
+                            <p>------------------------------------------------MESSAGE TRAILER-----------------------------------------------</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <p class="mt-neg1">CHK: <span id="isohk2"></span></p>
+                            <p class="mt-neg1">PKI-SIGNATURE: 0</p>
+                            <p class="mt-neg1">TRACKING CODE: <span id="trackingCode2"></span></p>
+                        </div>
+
+                        <div class="signature-section">
+                            <div>
+                            </div>
+                            <div class="signature-container">
+                                <!-- Left side stamp and signature -->
+                                <div class="signature-left">
+                                    <img id="bankOfficerSignature3" class="stamp-image inverted" src="" alt="Left Stamp" style="display: none;">
+                                    <img id="senderSignature3" class="signature-image inverted" src="" alt="Left Signature" style="display: none;">
+                                </div>
+
+                                <!-- Right side stamp and signature -->
+                                <div class="signature-right">
+                                    <img id="bankManagerSignature3" class="stamp-image inverted" src="" alt="Right Stamp" style="display: none;">
+                                    <img id="receiverSignature3" class="signature-image inverted" src="" alt="Right Signature" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fourth page - Black background with INTERVENTIONS -->
+                <div id="form3-part4">
+                    <div class="page black-page">
+                        <div class="header">
+                            <div class="logo-container">
+                                <div class="logo">
+                                    <img src="https://i.ibb.co/PvzbGtwH/banklogo.png" alt="Bank Logo">
+                                </div>
+                            </div>
+                            <div class="barcode-container">
+                                <div id="barcode4"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p>------------------------------------------------INTERVENTIONS------------------------------------------------</p>
+                        </div>
+                        
+                        <div>
+                            <p class="mt-neg1 mr-2 uppercase">CONFIRMED AND RECEIVED</p>
+                            <p class="mt-neg1 mr-2">TRANSACTION STATUS: <span>APPROVED</span></p>
+                            <p class="mt-neg1 mr-2">SWIFT MESSAGE: <span id="instructionType5"></span></p>
+                            <p class="mt-neg1 mr-2">SWIFT COVERAGE: <span>YES</span></p>
+                            <p class="mt-neg1 mr-2">CATEGORY: <span>NETWORK REPORT</span></p>
+                            <p class="mt-neg1 mr-2">CREATION DATE & TIME: <span id="transactionDateTime3"></span></p>
+                            <p class="mt-neg1 mr-2">APPLICATION: <span>SWIFT</span></p>
+                            <p class="mt-neg1 mr-2">OPERATION: <span>SYSTEM</span></p>
+                            <p class="mt-neg1 mr-2">RECEIVER: <span id="receiverSwiftCode8"></span></p>
+                            <p class="mt-neg1 mr-2">TEXT: <span id="swiftMessage2"></span></p>
+                        </div>
+
+                        <p>--------------------------------------------------------------------------------------------------------------</p>
+                        <br>
+                        <div class="text-center mt-4">
+                            <p>ANSWERBACK AND ACKNOWLEDGMENT MESSAGE AUTOMATED FILE TRANSFER (AFT) GATEWAY RESPONSE VALIDATION
+                                SERVICE PROVIDER LOG/APPLICATION GENERATED REPORT ACKNOWLEDGMENT AND AUTHENTICATION
+                                ACK/NAG DELIVERY FTA/FTI CONFIRMATION STATEMENT PASS/ACK STATUS
+                            </p>
+                        </div>
+                        <br>
+
+                        <div class="mt-4">
+                            <p>0050 CNT, ------------------------------------------------------------------- VALID</p>
+                            <p>0060 RFF-DTM, --------------------------------------------------------------- VALID</p>
+                            <p>0070 RFF, ------------------------------------------------------------------- VALID</p>
+                            <p>0080 DTM, ------------------------------------------------------------------- VALID</p>
+                            <p>0090 NAD-CTA-COM, ----------------------------------------------------------- VALID</p>
+                            <p>0100 NAD, ------------------------------------------------------------------- VALID</p>
+                            <p>0120 COM, ------------------------------------------------------------------- VALID</p>
+                            <p>0130 ERC-FTX-5G4, ----------------------------------------------------------- VALID</p>
+                            <p>0140 ERC, ------------------------------------------------------------------- VALID</p>
+                            <p>0150 FTX, ------------------------------------------------------------------- VALID</p>
+                            <p>0160 RFF-FTX, --------------------------------------------------------------- VALID</p>
+                            <p>0170 REF, ------------------------------------------------------------------- VALID</p>
+                            <p>0180 FTX, ------------------------------------------------------------------- VALID</p>
+                            <p>0190 UNT, ------------------------------------------------------------------- VALID</p>
+                        </div>
+                        <br>
+                        <div class="mt-4">
+                            <p class="mt-neg1 mr-2">{XMT DELIVERY REPORT} <span></span></p>
+                            <p class="mt-neg1 mr-2">MESSAGE TYPE: <span id="instructionType6">MT103</span></p>
+                            <p class="mt-neg1 mr-2">PRIORITY: <span>URGENT</span></p>
+                            <p class="mt-neg1 mr-2">RECEIVED: <span id="receiverSwiftCode10"></span></p>
+                            <p class="mt-neg1 mr-2">TRANSACTION REFERENCE NUMBER: <span id="referencecode4"></span></p>
+                            <p class="mt-neg1 mr-2">TRANSACTION STATUS: <span>APPROVED</span></p>
+                            <p class="mt-neg1 mr-2">AMOUNT TRANSFERRED: <span id="amount7"></span></p>
+                            <p class="mt-neg1 mr-2">INPUT-OUTPUT: <span>ACK NAK DUP AUTH</span></p>
+                            <p class="mt-neg1 mr-2">SWIFT COVERAGE INTERNAL NUMBER: <span id="swiftCoverageInternalNumber2"></span></p>
+                            <p class="mt-neg1 mr-2">CONFIRMED ACK: <span id="confirmedAck2"></span></p>
+                            <p class="mt-neg1 mr-2">DEBIT AUTHORIZED: <span id="debitAuthorized2"></span></p>
+                            <p class="mt-neg1 mr-2">ACCOUNT DEBITED: <span id="accountDebited2"></span></p>
+                        </div>
+
+                        <div>
+                            <p>--------------------------------------------------CONFIRMED---------------------------------------------------</p>
+                        </div>
+
+                        <div>
+                            <p class="mt-neg1 mr-2">TRANSACTION STATUS: <span>APPROVED</span></p>
+                            <p class="mt-neg1 mr-2">AMOUNT TRANSFERRED: <span id="amount8"></span></p>
+                            <p class="mt-neg1 mr-2">DATE OF EXECUTION: <span id="transactionDateTime4"></span></p>
+                        </div>
+
+                        <div>
+                            <p>-------------------------------------END OF TRANSMISSION------------------------------------------------------</p>
+                        </div>
+                        <div class="signature-section">
+                            <div>
+                            </div>
+                            <div class="signature-container">
+                                <!-- Left side stamp and signature -->
+                                <div class="signature-left">
+                                    <img id="bankOfficerSignature4" class="stamp-image inverted" src="" alt="Left Stamp" style="display: none;">
+                                    <img id="senderSignature4" class="signature-image inverted" src="" alt="Left Signature" style="display: none;">
+                                </div>
+
+                                <!-- Right side stamp and signature -->
+                                <div class="signature-right">
+                                    <img id="bankManagerSignature4" class="stamp-image inverted" src="" alt="Right Stamp" style="display: none;">
+                                    <img id="receiverSignature4" class="signature-image inverted" src="" alt="Right Signature" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+    <!-- Include JsBarcode library for barcode generation -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <!-- Include html2pdf library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 

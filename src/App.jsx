@@ -8,6 +8,9 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import PinLogin from './components/PinLogin';
+import TransferReceipts from './components/TransferReceipts';
+import Signatures from './components/Signatures';
+import TraceTransaction from './components/TraceTransaction';
 
 function AppContent() {
   const navigate = useNavigate();
@@ -65,7 +68,10 @@ function AppContent() {
                     <Route path="/ledger" element={<div>Ledger to Ledger Form (Coming Soon)</div>} />
                     <Route path="/dropbox" element={<div>DropBox Form (Coming Soon)</div>} />
                     <Route path="/mt103202" element={<div>MT103/202 Form (Coming Soon)</div>} />
-                  </Routes>
+                    <Route path="/transfer-receipts" element={<TransferReceipts />} />
+                    <Route path="/signatures" element={<Signatures />} />                  
+                    <Route path="/trace" element={<TraceTransaction />} />
+                    </Routes>
                 </main>
                 <Footer />
               </>

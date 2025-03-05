@@ -1,0 +1,708 @@
+/* Base styles for the form */
+#form3-part1, #form3-part2, #form3-part3, #form3-part4 {
+    page-break-after: always;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Courier Prime', monospace;
+}
+
+.form3-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+
+/* Page layout */
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 10mm;
+    margin: 10mm auto;
+    border: 1px solid #D3D3D3;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-black {
+    background: black;
+    color: white;
+}
+
+/* White page specific styles */
+.white-page {
+    background-color: white;
+    color: black;
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Black page specific styles */
+.black-page {
+    background-color: black;
+    color: white;
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Header styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Logo container */
+.logo-container {
+    margin-top: -5px;
+}
+
+/* Logo styles */
+.logo {
+    max-width: 250px;
+    max-height: 100px;
+}
+
+.logo img {
+    max-width: 100%;
+    height: auto;
+    max-height: 100px;
+}
+
+/* Barcode container */
+.barcode-container {
+    text-align: right;
+}
+
+.barcode-container svg {
+    height: 40px;
+}
+
+/* Utility classes */
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.flex {
+    display: flex;
+    width: 100%;
+}
+
+.inline {
+    display: inline;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.mt-neg1 {
+    margin-top: -2px;
+}
+
+.mt-2 {
+    margin-top: 2px;
+}
+
+.mt-4 {
+    margin-top: 4px;
+}
+
+.mb-4 {
+    margin-bottom: 4px;
+}
+
+.mr-2 {
+    margin-right: 2px;
+}
+
+.ml-40 {
+    margin-left: 40px;
+}
+
+.ml-52 {
+    margin-left: 52px;
+}
+
+.ml-4 {
+    margin-left: 4px;
+}
+
+.ml-92 {
+    margin-left: 92px;
+}
+
+.text-white {
+    color: white;
+}
+
+.text-black {
+    color: black;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.font-normal {
+    font-family: 'Courier Prime', monospace;
+    font-weight: normal;
+}
+
+/* Signature section */
+.signature-section {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Signature container */
+.signature-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Signature left and right */
+.signature-left, .signature-right {
+    width: 45%;
+    text-align: center;
+}
+
+/* Stamp image */
+.stamp-image {
+    max-width: 100px;
+    max-height: 100px;
+    margin-bottom: 10px;
+}
+
+/* Signature image */
+.signature-image {
+    max-width: 150px;
+    max-height: 60px;
+    margin-bottom: 5px;
+}
+
+/* Inverted images for black background */
+.inverted {
+    filter: invert(1);
+}
+
+/* Page break container */
+.page-break-container {
+    page-break-after: always;
+    page-break-inside: avoid;
+    break-after: page;
+    break-inside: avoid;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}
+
+/* Page break utilities */
+.page-break-before {
+    page-break-before: always;
+}
+
+.page-break-after {
+    page-break-after: always;
+}
+
+.page-break-avoid {
+    page-break-inside: avoid;
+}
+
+/* Form controls */
+.form-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+/* Button styles */
+.print-button, .pdf-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.print-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.pdf-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.print-button:hover, .pdf-button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.print-button:active, .pdf-button:active {
+    transform: translateY(0);
+}
+
+/* Print styles */
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: white;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .form3-container {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        font-size: 10pt;
+        line-height: 1.3;
+        box-shadow: none;
+    }
+    
+    .page {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 5mm 10mm;
+        border: none;
+        box-shadow: none;
+        page-break-after: always;
+    }
+    
+    .signature-section {
+        margin-top: 20mm;
+    }
+    
+    .signature-image, .stamp-image {
+        max-width: 100px;
+        max-height: 60px;
+    }
+    
+    #form3-part1, #form3-part2, #form3-part3, #form3-part4 {
+        page-break-after: always;
+    }
+    
+    #form3-part4 {
+        page-break-after: avoid;
+    }
+    
+    .form-controls {
+        display: none;
+    }
+    
+    /* Fix for white pages in print */
+    .white-page {
+        background-color: white !important;
+        color: black !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* Fix for black pages in print */
+    .black-page {
+        background-color: black !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+
+/* Additional fixes for white pages */
+.white-page p {
+    margin: 3px 0;
+    line-height: 1.3;
+    font-family: 'Courier Prime', monospace;
+}
+
+.white-page .header {
+    margin-bottom: 30px;
+}
+
+.white-page .section {
+    margin-bottom: 20px;
+}
+
+/* Ensure proper spacing in white pages */
+#form3-part1, #form3-part2 {
+    background-color: white;
+    color: black;
+}
+
+/* Ensure proper spacing in black pages */
+#form3-part3, #form3-part4 {
+    background-color: black;
+    color: white;
+}
+
+/* Black page specific styles - same layout as white pages but inverted colors */
+.black-page p {
+    margin: 3px 0;
+    line-height: 1.3;
+    font-family: 'Courier Prime', monospace;
+}
+
+.black-page .header {
+    margin-bottom: 30px;
+}
+
+.black-page .section {
+    margin-bottom: 20px;
+}
+
+/* Fix for details grid in both white and black pages */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item.full-width {
+    grid-column: span 2;
+}
+
+.detail-item .label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.detail-item .value {
+    font-family: 'Courier Prime', monospace;
+}
+
+/* Fix for status completed */
+.status-completed {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.black-page .status-completed {
+    color: #8eff94;
+}
+
+.black-page p:not(.black-dashes) {
+    color: white;
+}
+
+.black-page .black-dashes {
+    color: black;
+}
+
+/* Ensure images in black pages are properly visible */
+.black-page img:not(.inverted) {
+    filter: invert(1);
+    max-height: 100px;
+}
+
+/* Ensure barcode is visible in both white and black pages */
+.black-page #barcode1, .black-page #barcode2, .black-page #barcode3, .black-page #barcode4 {
+    filter: invert(1);
+}
+
+.page > div {
+    margin-bottom: 5px;
+}
+
+.page-black img.inverted {
+    filter: invert(1);
+    max-height: 100px;
+}
+
+/* Global Styles */
+:root {
+    --primary-color: #1a365d;
+    --secondary-color: #2c5282;
+    --accent-color: #4299e1;
+    --success-color: #48bb78;
+    --warning-color: #ecc94b;
+    --danger-color: #f56565;
+    --text-color: #2d3748;
+    --light-text: #718096;
+    --background-color: #f7fafc;
+    --border-color: #e2e8f0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier Prime', monospace;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Login Header */
+.login-header {
+    background-color: var(--primary-color);
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.login-logo {
+    height: 50px;
+}
+
+/* Login Container */
+.login-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.login-box {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+}
+
+.login-box h2 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.login-subtitle {
+    color: var(--light-text);
+    margin-bottom: 2rem;
+}
+
+/* PIN Input Styles */
+.pin-form {
+    margin-bottom: 2rem;
+}
+
+.pin-input-container {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.pin-input {
+    width: 50px;
+    height: 60px;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.pin-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+.pin-input.error {
+    border-color: var(--danger-color);
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Error Message */
+.error-message {
+    color: var(--danger-color);
+    margin-bottom: 1rem;
+    min-height: 24px;
+    font-size: 0.9rem;
+}
+
+/* Login Button */
+.login-button {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.login-button:hover {
+    background-color: #38a169;
+}
+
+.login-button i {
+    font-size: 1.2rem;
+}
+
+/* Security Info */
+.security-info {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    color: var(--light-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.security-info i {
+    color: var(--success-color);
+}
+
+/* Footer Styles */
+.login-footer {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 2rem;
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.footer-section h4 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #cbd5e0;
+}
+
+.footer-section i {
+    color: var(--accent-color);
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    font-size: 0.9rem;
+    color: #cbd5e0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-container {
+        padding: 1rem;
+    }
+
+    .login-box {
+        padding: 1.5rem;
+    }
+
+    .pin-input-container {
+        gap: 0.5rem;
+    }
+
+    .pin-input {
+        width: 40px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .footer-section ul li {
+        justify-content: center;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .pin-input,
+    .login-button,
+    .pin-input.error {
+        transition: none;
+        animation: none;
+    }
+} 

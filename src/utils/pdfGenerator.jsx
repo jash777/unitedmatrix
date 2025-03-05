@@ -249,11 +249,11 @@ export const generatePDF = async (formElement, options = {}) => {
       }
 
       /* Message trailer specific */
-      // .message-trailer-section {
-      //   position: relative;
-      //   margin-top: auto;
-      //   margin-bottom: 20px;
-      // }
+      .message-trailer-section {
+        position: relative;
+        margin-top: auto;
+        margin-bottom: 20px;
+      }
 
       /* Ensure proper page breaks */
       .page-break-before {
@@ -298,12 +298,12 @@ export const generatePDF = async (formElement, options = {}) => {
       const paragraphs = clone.querySelectorAll('p');
       paragraphs.forEach(p => {
         // Handle message trailer
-        // if (p.textContent && p.textContent.trim() === 'MESSAGE TRAILER') {
-        //   const trailerDiv = p.closest('div');
-        //   if (trailerDiv) {
-        //     trailerDiv.classList.add('message-trailer-section');
-        //   }
-        // }
+        if (p.textContent && p.textContent.trim() === 'MESSAGE TRAILER') {
+          const trailerDiv = p.closest('div');
+          if (trailerDiv) {
+            trailerDiv.classList.add('message-trailer-section');
+          }
+        }
         
         // Handle interventions
         if (p.textContent && p.textContent.trim() === 'INTERVENTIONS') {

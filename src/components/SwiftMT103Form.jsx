@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import { useTransaction } from '../context/transactionContext';
+import { API_ENDPOINTS } from '../config/api';
 import './SwiftMT103Form.css';
+import accounts from '../config/accounts.json';
 
 const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
   const navigate = useNavigate();
@@ -71,31 +73,113 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
     field_77b: '' // Regulatory Reporting
   });
 
-  // Fetch sender accounts from database when component mounts
+  // Add loading state at the top with other states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Add this function after other state declarations
+  const saveTransaction = async (transactionData) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5005/api/save-transaction', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(transactionData)
+      });
+      
+      const result = await response.json();
+      console.log('Transaction saved:', result);
+      return result;
+    } catch (error) {
+      console.error('Error saving transaction:', error);
+      throw error;
+    }
+  };
+
+  // Add new state for loading
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  // Add new state for Swift connection
+  const [isSwiftConnected, setIsSwiftConnected] = useState(false);
+
+  // Update the handleSwiftConnect function
+  const handleSwiftConnect = async () => {
+    if (!selectedSender) {
+      alert('Please select a sender account first');
+      return;
+    }
+
+    setIsConnecting(true);
+    try {
+      const transactionData = {
+        trn: formData.field_20,
+        uetr: formData.uetr,
+        senderInfo: {
+          accountName: selectedSender.AccountName,
+          accountNumber: selectedSender.AccountNumber,
+          swiftCode: selectedSender.SwiftCode,
+          bankName: selectedSender.BankName
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      const result = await saveTransaction(transactionData);
+      setIsSwiftConnected(true);
+      alert('Successfully connected to SWIFT network');
+    } catch (error) {
+      alert('Failed to connect to SWIFT network. Please try again.');
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  // Remove fetchSenderAccounts function and replace useEffect
   useEffect(() => {
-    const fetchSenderAccounts = async () => {
-      try {
-        const response = await fetch('/api/accounts', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include'
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setSenderAccounts(data);
-      } catch (error) {
-        console.error('Error fetching sender accounts:', error);
-      }
-    };
+    // Set accounts directly from imported JSON
+    setSenderAccounts(accounts);
     
-    fetchSenderAccounts();
+    // If there's a selectedSenderInfo, find and select that account
+    if (selectedSenderInfo) {
+      const selectedAccount = accounts.find(account => 
+        account.id === selectedSenderInfo.id || 
+        account.AccountNumber === selectedSenderInfo.AccountNumber
+      );
+      if (selectedAccount) {
+        setSelectedSender(selectedAccount);
+        updateFormWithSenderInfo(selectedAccount);
+      }
+    }
   }, []);
+
+  // Update the handleSenderSelect function to show more account details
+  const handleSenderSelect = (e) => {
+    const selectedAccountId = e.target.value;
+    console.log('Selected account ID:', selectedAccountId);
+
+    const selectedAccount = accounts.find(account => 
+      account.id.toString() === selectedAccountId.toString()
+    );
+    
+    console.log('Selected account:', selectedAccount);
+
+    if (selectedAccount) {
+      setSelectedSender(selectedAccount);
+      updateFormWithSenderInfo(selectedAccount);
+    }
+  };
+
+  // Add function to update form with sender info
+  const updateFormWithSenderInfo = (senderInfo) => {
+    setFormData(prevData => ({
+      ...prevData,
+      field_50a_1: senderInfo.AccountName || '',
+      field_50a_2: senderInfo.AccountNumber || '',
+      field_52a_1: senderInfo.SwiftCode || '',
+      field_52a_2: senderInfo.BankName || '',
+      field_52a_3: senderInfo.BankAddress || '',
+      field_20: generateTRN(senderInfo.SwiftCode)
+    }));
+  };
 
   // Generate TRN (Transaction Reference Number) similar to doMT103.php
   const generateTRN = (swiftCode) => {
@@ -134,28 +218,6 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
     }));
   };
 
-  // Handle sender selection
-  const handleSenderSelect = (e) => {
-    const selectedAccountId = e.target.value;
-    const selectedAccount = senderAccounts.find(account => account.id === parseInt(selectedAccountId) || account.id === selectedAccountId);
-    
-    setSelectedSender(selectedAccount);
-    
-    if (selectedAccount) {
-      // Update form data with selected sender information
-      setFormData(prevData => ({
-        ...prevData,
-        field_50a_1: selectedAccount.AccountName || '',
-        field_50a_2: selectedAccount.AccountNumber || '',
-        field_52a_1: selectedAccount.SwiftCode || '',
-        field_52a_2: selectedAccount.BankName || '',
-        field_52a_3: selectedAccount.BankAddress || '',
-        // Generate new TRN based on the selected Swift code
-        field_20: generateTRN(selectedAccount.SwiftCode)
-      }));
-    }
-  };
-
   // Handle signature file upload
   const handleSignatureUpload = (e, signatureType) => {
     const file = e.target.files[0];
@@ -171,21 +233,25 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
     }
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  // Update the handleSubmit function
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submission started");
     
+    if (!isSwiftConnected) {
+      alert('Please connect to SWIFT network before proceeding with the payment');
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       // Create a timestamp for the transaction
       const now = new Date().toISOString();
-      console.log("Timestamp created:", now);
       
       // Format date for display
       const transactionFullDate = now.substring(0, 10);
       const transactionFullTime = now.substring(11, 19);
       
-      // Prepare transaction data for context
+      // Prepare transaction data
       const transactionData = {
         // Transaction reference and details
         referencecode: formData.field_20,
@@ -264,20 +330,47 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
         bankManagerSignature: formData.bankManagerSignature,
       };
       
-      console.log("Transaction data prepared:", transactionData);
+      // First save the transaction to the database
+      const saveResponse = await fetch('http://127.0.0.1:5005/api/save-transaction', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(transactionData)
+      });
+
+      if (!saveResponse.ok) {
+        throw new Error('Failed to save transaction');
+      }
+
+      // Then generate the PDF
+      const pdfResponse = await fetch(API_ENDPOINTS.PDF_GENERATOR, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(transactionData)
+      });
+
+      if (!pdfResponse.ok) {
+        throw new Error('Failed to generate PDF');
+      }
+
+      const pdfResult = await pdfResponse.json();
       
-      // Update transaction context
-      setTransactionData(transactionData);
-      console.log("Transaction context updated");
+      // Update transaction context with both transaction data and PDF URL
+      setTransactionData({
+        ...transactionData,
+        pdfUrl: pdfResult.pdfUrl // Assuming the backend returns the PDF URL
+      });
       
       // Navigate to print page
-      console.log("Attempting to navigate to /print");
-      setTimeout(() => {
-        navigate('/print');
-        console.log("Navigation called with delay");
-      }, 100); // Small delay to ensure state is updated
+      navigate('/print');
     } catch (error) {
       console.error("Error in form submission:", error);
+      alert('Error processing transaction. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -300,36 +393,128 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
               >
                 <option value="">-- Select Sender Account --</option>
                 {senderAccounts.map(account => (
-                  <option key={account.id} value={account.id}>
-                    {account.AccountName} - {account.AccountNumber}
+                  <option 
+                    key={account.id} 
+                    value={account.id}
+                  >
+                    {account.AccountName} - {account.AccountNumber} ({account.BankName})
                   </option>
                 ))}
               </select>
             </div>
+            
+            {/* Enhanced selected account details display */}
+            {selectedSender && (
+              <div className="selected-account-info">
+                <div className="account-detail">
+                  <strong>Bank Name:</strong> 
+                  <span>{selectedSender.BankName}</span>
+                </div>
+                <div className="account-detail">
+                  <strong>SWIFT:</strong> 
+                  <span>{selectedSender.SwiftCode}</span>
+                </div>
+                <div className="account-detail">
+                  <strong>Account Name:</strong> 
+                  <span>{selectedSender.AccountName}</span>
+                </div>
+                <div className="account-detail">
+                  <strong>Account Number:</strong> 
+                  <span>{selectedSender.AccountNumber}</span>
+                </div>
+                <div className="account-detail">
+                  <strong>Bank Address:</strong> 
+                  <span>{selectedSender.BankAddress}</span>
+                </div>
+                <div className="account-detail">
+                  <strong>Account Type:</strong> 
+                  <span>{selectedSender.Types || 'Standard'}</span>
+                </div>
+                <div className="account-detail">
+                  <strong>Balance:</strong> 
+                  <span>{selectedSender.Balance_1}</span>
+                </div>
+              </div>
+            )}
           </div>
           
           <div className="form-section">
             <h3>Transaction Reference</h3>
             <div className="form-group">
               <label htmlFor="field_20">:20: Transaction Reference Number (TRN)</label>
-              <input 
-                type="text" 
-                id="field_20" 
-                name="field_20" 
-                value={formData.field_20} 
-                readOnly 
-              />
+              <div className="input-with-button">
+                <input 
+                  type="text" 
+                  id="field_20" 
+                  name="field_20" 
+                  value={formData.field_20} 
+                  onChange={handleChange}
+                  className="editable-input"
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setFormData(prev => ({
+                    ...prev,
+                    field_20: generateTRN(formData.field_52a_1)
+                  }))}
+                  className="regenerate-btn"
+                >
+                  <i className="fas fa-sync-alt"></i>
+                  Regenerate
+                </button>
+              </div>
             </div>
             
             <div className="form-group">
               <label htmlFor="uetr">UETR (Unique End-to-End Transaction Reference)</label>
-              <input 
-                type="text" 
-                id="uetr" 
-                name="uetr" 
-                value={formData.uetr} 
-                readOnly 
-              />
+              <div className="input-with-button">
+                <input 
+                  type="text" 
+                  id="uetr" 
+                  name="uetr" 
+                  value={formData.uetr} 
+                  onChange={handleChange}
+                  className="editable-input"
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setFormData(prev => ({
+                    ...prev,
+                    uetr: uuidv4()
+                  }))}
+                  className="regenerate-btn"
+                >
+                  <i className="fas fa-sync-alt"></i>
+                  Regenerate
+                </button>
+              </div>
+            </div>
+
+            {/* Add the new Swift Connect button */}
+            <div className="form-group swift-connect">
+              <button 
+                type="button" 
+                className={`swift-connect-btn ${isConnecting ? 'connecting' : ''} ${isSwiftConnected ? 'connected' : ''}`}
+                onClick={handleSwiftConnect}
+                disabled={isConnecting || !selectedSender || isSwiftConnected}
+              >
+                {isConnecting ? (
+                  <>
+                    <span className="spinner"></span>
+                    Connecting...
+                  </>
+                ) : isSwiftConnected ? (
+                  <>
+                    <i className="fas fa-check-circle"></i>
+                    Connected to SWIFT
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-plug"></i>
+                    Connect to SWIFT
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
@@ -724,6 +909,17 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
           <button type="submit" className="submit-button">MAKE A PAYMENT NOW!</button>
         </div>
       </form>
+
+      {/* Add this loader component right before the closing form tag */}
+      {isSubmitting && (
+        <div className="form-overlay">
+          <div className="loader-container">
+            <div className="loader"></div>
+            <p className="loader-text">Processing Payment</p>
+            <p className="loader-subtext">Please wait while we generate your receipt...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
