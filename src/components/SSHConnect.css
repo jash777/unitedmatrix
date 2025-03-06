@@ -1,0 +1,368 @@
+.ssh-connect-container {
+  height: 100vh;
+  background-color: #1a1a1a;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ssh-connect-content {
+  width: 100%;
+  max-width: 1200px;
+  height: 80vh;
+}
+
+.ssh-terminal-window {
+  background-color: #282828;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  height: 100%;
+  position: relative;
+}
+
+.terminal-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.terminal-header {
+  background: linear-gradient(to bottom, #3a3a3a, #2a2a2a);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #444;
+  user-select: none;
+}
+
+.terminal-controls {
+  display: flex;
+  gap: 8px;
+  margin-right: 16px;
+}
+
+.control {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.control:hover {
+  opacity: 0.8;
+}
+
+.control.close { background-color: #ff5f56; }
+.control.minimize { background-color: #ffbd2e; }
+.control.maximize { background-color: #28c940; }
+
+.terminal-title {
+  color: #ddd;
+  font-size: 14px;
+  font-weight: 500;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.terminal-body {
+  flex: 1;
+  background-color: #1e1e1e;
+  padding: 4px;
+  overflow: hidden;
+  position: relative;
+  min-height: 400px;
+}
+
+/* XTerm.js specific styles */
+.xterm {
+  height: 100%;
+  width: 100%;
+}
+
+.xterm-viewport {
+  overflow-y: auto !important;
+  scrollbar-width: thin;
+  scrollbar-color: #666 #1e1e1e;
+}
+
+.xterm-viewport::-webkit-scrollbar {
+  width: 8px;
+}
+
+.xterm-viewport::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+.xterm-viewport::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 4px;
+}
+
+.xterm-viewport::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* Connection prompt styles */
+.ssh-connect-prompt {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.connection-info {
+  color: #d7d7d7;
+  margin-bottom: 24px;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #444;
+}
+
+.connection-info h3 {
+  color: #87d7ff;
+  margin: 0 0 16px;
+  font-size: 18px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+}
+
+.error-message {
+  color: #ff5f5f;
+  background: rgba(255, 95, 95, 0.1);
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+}
+
+.ssh-connect-button {
+  background: linear-gradient(to bottom, #2b6cb0, #2c5282);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ssh-connect-button:hover {
+  background: linear-gradient(to bottom, #2c5282, #2a4365);
+  transform: translateY(-1px);
+}
+
+.ssh-connect-button:active {
+  transform: translateY(0);
+}
+
+.ssh-connect-button.loading {
+  background: #4a5568;
+  cursor: wait;
+  position: relative;
+}
+
+.ssh-connect-button.loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: button-loading 0.8s linear infinite;
+  margin-left: 8px;
+}
+
+@keyframes button-loading {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .ssh-terminal-window {
+    height: 70vh;
+    min-height: 400px;
+  }
+
+  .ssh-connect-prompt {
+    width: 95%;
+    padding: 16px;
+  }
+
+  .connection-info {
+    padding: 12px;
+  }
+
+  .ssh-connect-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+/* Selection styling */
+.terminal-body ::selection {
+  background: rgba(135, 215, 255, 0.3);
+  color: inherit;
+}
+
+/* Status indicators */
+.status::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status.connected::before {
+  background-color: #28c940;
+}
+
+.status.disconnected::before {
+  background-color: #ff5f56;
+}
+
+.status.connecting::before {
+  background-color: #ffbd2e;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.5; }
+}
+
+.welcome-message {
+  color: #87d7ff;
+  margin-bottom: 16px;
+  padding: 8px;
+  border-radius: 4px;
+  background: rgba(135, 215, 255, 0.05);
+}
+
+.terminal-line {
+  padding: 2px 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+.terminal-line.command {
+  color: #d7d7d7;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 3px;
+  margin: 2px 0;
+  padding: 2px 4px;
+}
+
+.terminal-line.error {
+  color: #ff5f5f;
+  background: rgba(255, 95, 95, 0.05);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.line-content {
+  flex: 1;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.prompt {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.prompt-user { color: #87d7ff; }
+.prompt-at { color: #d7d7d7; margin: 0 2px; }
+.prompt-host { color: #87d7ff; }
+.prompt-colon { color: #d7d7d7; margin: 0 2px; }
+.prompt-path { color: #87d7d7; }
+.prompt-dollar { color: #d7d7d7; margin-left: 2px; }
+
+.terminal-input-line {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 3px;
+}
+
+.terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #f0f0f0;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+
+.terminal-input.cursor-blink {
+  border-right: 2px solid #87d7ff;
+  margin-right: 2px;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+.terminal-input::placeholder {
+  color: #666;
+}
+
+/* Scrollbar styling */
+.terminal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal-body::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.terminal-body::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+.terminal-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .terminal-body {
+    font-size: 13px;
+  }
+} 

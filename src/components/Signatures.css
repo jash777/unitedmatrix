@@ -5,12 +5,9 @@
 }
 
 .signatures-container {
+  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 30px;
 }
 
 .signatures-container h2 {
@@ -170,15 +167,57 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  background-color: #4299e1;
+}
+.fa-file-download {
+  color: rgb(221, 15, 15);
 }
 
 .process-btn {
-  background: #3182ce;
-  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(to bottom, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
-.process-btn:hover {
-  background: #2c5282;
+.process-btn:hover:not(:disabled) {
+  background: linear-gradient(to bottom, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+}
+
+.process-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+}
+
+.process-btn.processing {
+  background: linear-gradient(to bottom, #1e40af, #1e3a8a);
+  cursor: not-allowed;
+}
+
+.process-btn:disabled {
+  background: linear-gradient(to bottom, #94a3b8, #64748b);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.process-btn i {
+  font-size: 16px;
+}
+
+.process-btn span {
+  color: #ffffff;
+  font-weight: 500;
 }
 
 .download-btn {
@@ -267,7 +306,12 @@
 
 .preview-controls {
   display: flex;
-  gap: 10px;
+  gap: 15px;
+  align-items: center;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .spinner {
@@ -275,7 +319,7 @@
   height: 16px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  border-top-color: white;
+  border-top-color: #ffffff;
   animation: spin 0.8s linear infinite;
 }
 
@@ -331,12 +375,10 @@
 /* PDF Preview Container */
 .pdf-preview-container {
   position: relative;
-  width: 100%;
-  height: 700px;
-  overflow: auto;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #dee2e6;
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .pdf-viewer {
@@ -380,49 +422,66 @@
   cursor: move;
 }
 
-.preview-controls {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
 .zoom-controls {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  padding: 4px;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
 }
 
 .zoom-controls button {
-  background: #fff;
-  border: 1px solid #ddd;
+  padding: 8px 12px;
+  background: #f1f5f9;
+  border: none;
   border-radius: 4px;
-  padding: 5px 10px;
+  color: #475569;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.zoom-controls button:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #1e293b;
 }
 
 .zoom-controls span {
   min-width: 60px;
   text-align: center;
+  color: #475569;
+  font-weight: 500;
 }
 
 .page-controls {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  padding: 4px;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
 }
 
 .page-controls button {
-  background: #fff;
-  border: 1px solid #ddd;
+  padding: 8px 12px;
+  background: #f1f5f9;
+  border: none;
   border-radius: 4px;
-  padding: 5px 10px;
+  color: #475569;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.page-controls button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.page-controls button:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.page-controls span {
+  color: #475569;
+  font-weight: 500;
 }
 
 .pdf-loading, .pdf-error {
@@ -751,4 +810,214 @@
 .signature-element.dragging::before,
 .stamp-element.dragging::before {
   border-color: rgba(66, 153, 225, 0.5);
+}
+
+/* Add success animation */
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 24px;
+  background-color: #48bb78;
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeInOut 3s ease forwards;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Add these styles for the download options */
+.download-options {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 8px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.sanitize-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sanitize-option:hover {
+  background: #f8fafc;
+  border-color: #cbd5e0;
+}
+
+.sanitize-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.sanitize-option .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.sanitize-option .checkbox-label i {
+  color: #2563eb;
+  font-size: 14px;
+}
+
+.sanitize-option:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Add error state styles */
+.process-btn.error {
+  background: #ef4444;
+}
+
+.process-btn.error:hover {
+  background: #dc2626;
+}
+
+/* Add success animation */
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.success-icon {
+  animation: checkmark 0.3s ease-in-out forwards;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  background: #1e293b;
+  color: white;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #1e293b transparent transparent transparent;
+}
+
+/* Update process button styles */
+.process-btn {
+  min-width: 200px;
+  justify-content: center;
+}
+
+.process-btn.processing {
+  background: linear-gradient(to right, #2563eb, #1d4ed8);
+}
+
+/* Add animation for processing state */
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.process-btn.processing {
+  background-size: 200% 200%;
+  animation: gradient 2s ease infinite;
+}
+
+.signature-preview, .stamp-preview {
+  pointer-events: auto;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  transition: transform 0.2s ease;
+}
+
+.signature-preview {
+  max-width: 120px;
+  max-height: 50px;
+}
+
+.stamp-preview {
+  max-width: 100px;
+  max-height: 100px;
+}
+
+.signature-preview:hover, .stamp-preview:hover {
+  transform: scale(1.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.signature-preview.dragging, .stamp-preview.dragging {
+  opacity: 0.7;
+  cursor: grabbing;
+}
+
+.pdf-preview img {
+  image-rendering: high-quality;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Add these new styles for better visibility during placement */
+.signatures-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.signature-preview, .stamp-preview {
+  border: 1px dashed rgba(0, 0, 0, 0.2) !important;
+}
+
+.signature-preview:hover, .stamp-preview:hover {
+  border: 1px dashed rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Add a subtle guide when dragging */
+.signature-preview.dragging, .stamp-preview.dragging {
+  border: 1px solid rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 } 

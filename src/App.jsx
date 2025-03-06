@@ -11,6 +11,7 @@ import PinLogin from './components/PinLogin';
 import TransferReceipts from './components/TransferReceipts';
 import Signatures from './components/Signatures';
 import TraceTransaction from './components/TraceTransaction';
+import SSHConnect from './components/SSHConnect';
 
 function AppContent() {
   const navigate = useNavigate();
@@ -71,6 +72,7 @@ function AppContent() {
                     <Route path="/transfer-receipts" element={<TransferReceipts />} />
                     <Route path="/signatures" element={<Signatures />} />                  
                     <Route path="/trace" element={<TraceTransaction />} />
+                    <Route path="/ssh-connect" element={<SSHConnect />} />
                     </Routes>
                 </main>
                 <Footer />

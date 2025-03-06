@@ -43,8 +43,8 @@ const Navbar = ({ userName = "John Smith", userRole = "Senior Transfer Officer",
       items: [
         { id: 'tracing', name: 'Advanced Tracing System', route: '/tracing' },
         { id: 'tracking', name: 'Global Transaction Tracking', route: '/tracking' },
-        { id: 'blackscreen', name: 'Blackscreen Monitor', route: '/blackscreen' },
-        { id: 'interbank', name: 'Interbank Screen', route: '/interbank' }
+        { id: 'blackscreen', name: 'Blackscreen Monitor', route: '/ssh-connect' },
+        { id: 'interbank', name: 'Interbank Screen', route: '/ssh-connect' }
       ]
     }
   };
@@ -141,6 +141,9 @@ const Navbar = ({ userName = "John Smith", userRole = "Senior Transfer Officer",
               </li>
               <li className="bank-nav-item">
                 <a href="/trace">Trace Transaction</a>
+              </li>
+              <li className="bank-nav-item">
+                <a href="/ssh-connect" style={{color: 'green'}}>InterBank</a>
               </li>
             </ul>
             

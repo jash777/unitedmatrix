@@ -1,10 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTransaction } from '../context/transactionContext';
 import './Signatures.css';
-import { Document, Page } from 'react-pdf';
+import { Document, Page, pdfjs } from 'react-pdf';
+import { jsPDF } from 'jspdf';
 import '../utils/pdfWorker'; // Import the worker configuration
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
+import { PDFDocument } from 'pdf-lib';
+
+// Configure PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+
+// Constants for image sizes (in pixels)
+const SIGNATURE_WIDTH = 120; // Reduced from 200 to 120px
+const SIGNATURE_HEIGHT = 50; // Reduced from 80 to 50px
+const STAMP_WIDTH = 100; // Reduced from 200 to 100px
+const STAMP_HEIGHT = 100; // Reduced from 120 to 100px (making it square for stamps)
+const RENDER_SCALE = 3; // Keep high quality rendering
 
 const Signatures = () => {
   const transactionData = useTransaction();
@@ -39,6 +51,9 @@ const Signatures = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const previewRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [pdfBytes, setPdfBytes] = useState(null);
+  const [sanitizeMetadata, setSanitizeMetadata] = useState(false);
 
   // Function to handle successful PDF load
   const onDocumentLoadSuccess = ({ numPages }) => {
@@ -48,34 +63,29 @@ const Signatures = () => {
   // Handle PDF preview with PDF.js
   const handlePdfUpload = async (event) => {
     const file = event.target.files[0];
-    setPdfError(null);
-    setIsLoading(true);
+    if (!file) return;
 
     try {
-      if (!file) {
-        throw new Error('No file selected');
-      }
-
       if (file.type !== 'application/pdf') {
         throw new Error('Please upload a valid PDF file');
       }
 
-      // Create array buffer from file
-      const arrayBuffer = await file.arrayBuffer();
-      const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
-      const fileUrl = URL.createObjectURL(blob);
-      
+      // Create a blob URL for preview
+      const fileUrl = URL.createObjectURL(file);
       setPdfFile(file);
       setPdfPreview(fileUrl);
-      setPageNumber(1);
+      setPageNumber(1); // Reset to first page
       
+      // Store the PDF bytes
+      const arrayBuffer = await file.arrayBuffer();
+      setPdfBytes(arrayBuffer);
+
     } catch (error) {
       console.error('PDF Upload Error:', error);
-      setPdfError(error.message);
+      alert(error.message);
       setPdfFile(null);
       setPdfPreview(null);
-    } finally {
-      setIsLoading(false);
+      setPdfBytes(null);
     }
   };
 
@@ -170,7 +180,113 @@ const Signatures = () => {
     };
   }, [isDragging, selectedElement]);
 
-  const handleProcessPDF = async () => {
+  const sanitizePDF = async (pdfBytes) => {
+    try {
+      // Load the PDF document
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+
+      // Clear all metadata
+      pdfDoc.setTitle('');
+      pdfDoc.setAuthor('');
+      pdfDoc.setSubject('');
+      pdfDoc.setKeywords([]);
+      pdfDoc.setCreator('');
+      pdfDoc.setProducer('');
+      
+      // Remove creation and modification dates
+      const info = pdfDoc.getInfoDict();
+      if (info) {
+        info.delete('CreationDate');
+        info.delete('ModDate');
+        info.delete('Producer');
+        info.delete('Creator');
+        info.delete('Title');
+        info.delete('Author');
+        info.delete('Subject');
+        info.delete('Keywords');
+      }
+
+      // Save with minimal metadata
+      const sanitizedBytes = await pdfDoc.save({
+        updateMetadata: false,
+        addDefaultPage: false,
+        preservePDFForm: true
+      });
+
+      // Verify sanitization (using proper method)
+      const verifyDoc = await PDFDocument.load(sanitizedBytes);
+      const verifyInfo = verifyDoc.getInfoDict();
+      
+      // Log remaining metadata keys if any exist
+      if (verifyInfo) {
+        console.log('Remaining metadata keys:', {
+          hasCreationDate: verifyInfo.has('CreationDate'),
+          hasModDate: verifyInfo.has('ModDate'),
+          hasProducer: verifyInfo.has('Producer'),
+          hasCreator: verifyInfo.has('Creator'),
+          hasTitle: verifyInfo.has('Title'),
+          hasAuthor: verifyInfo.has('Author'),
+          hasSubject: verifyInfo.has('Subject'),
+          hasKeywords: verifyInfo.has('Keywords')
+        });
+      }
+
+      return sanitizedBytes;
+    } catch (error) {
+      console.error('Error in sanitizePDF:', error);
+      throw new Error(`Sanitization failed: ${error.message}`);
+    }
+  };
+
+  const drawImageWithQuality = async (context, image, x, y, targetWidth, targetHeight) => {
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    
+    // Set temp canvas size to source image size
+    tempCanvas.width = image.width;
+    tempCanvas.height = image.height;
+    
+    // Draw original image to temp canvas
+    tempCtx.drawImage(image, 0, 0, image.width, image.height);
+    
+    // Calculate aspect ratio
+    const aspectRatio = image.width / image.height;
+    
+    // Calculate new dimensions maintaining aspect ratio
+    let newWidth = targetWidth;
+    let newHeight = targetHeight;
+    
+    if (aspectRatio > 1) {
+      newHeight = targetWidth / aspectRatio;
+    } else {
+      newWidth = targetHeight * aspectRatio;
+    }
+    
+    // Center the image
+    const xOffset = (targetWidth - newWidth) / 2;
+    const yOffset = (targetHeight - newHeight) / 2;
+    
+    // Enable high-quality image scaling
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+    
+    // Draw the image using the temporary canvas
+    context.drawImage(
+      tempCanvas,
+      0,
+      0,
+      image.width,
+      image.height,
+      x + xOffset,
+      y + yOffset,
+      newWidth,
+      newHeight
+    );
+
+    tempCanvas.remove();
+  };
+
+  const generatePDFWithSignatures = async () => {
     if (!pdfFile) {
       alert('Please upload a PDF file first');
       return;
@@ -178,40 +294,160 @@ const Signatures = () => {
 
     setIsProcessing(true);
     try {
-      const formData = new FormData();
-      formData.append('pdf', pdfFile);
-      formData.append('signatures', JSON.stringify(signatures));
-      formData.append('stamps', JSON.stringify(stamps));
-      formData.append('positions', JSON.stringify(positions));
-
-      const response = await fetch('http://127.0.0.1:5005/api/process-pdf', {
-        method: 'POST',
-        body: formData
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'pt',
+        format: 'a4'
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to process PDF');
+      // Load the original PDF
+      const arrayBuffer = await pdfFile.arrayBuffer();
+      const pdfDoc = await pdfjs.getDocument(arrayBuffer).promise;
+      const totalPages = pdfDoc.numPages;
+
+      // Process each page
+      for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+        const page = await pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({ scale: RENDER_SCALE });
+
+        // Create canvas with high resolution
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        // Enable high-quality rendering
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = 'high';
+
+        // Render PDF page
+        await page.render({
+          canvasContext: context,
+          viewport: viewport
+        }).promise;
+
+        // Add signatures if on current page
+        if (pageNum === pageNumber) {
+          // Draw signatures
+          await Promise.all(
+            Object.entries(signatures).map(async ([key, value]) => {
+              if (value && positions[key]) {
+                const img = new Image();
+                img.src = value;
+                await new Promise((resolve) => {
+                  img.onload = async () => {
+                    const scaledX = positions[key].x * RENDER_SCALE;
+                    const scaledY = positions[key].y * RENDER_SCALE;
+                    await drawImageWithQuality(
+                      context,
+                      img,
+                      scaledX,
+                      scaledY,
+                      SIGNATURE_WIDTH * RENDER_SCALE,
+                      SIGNATURE_HEIGHT * RENDER_SCALE
+                    );
+                    resolve();
+                  };
+                });
+              }
+            })
+          );
+
+          // Draw stamps
+          await Promise.all(
+            Object.entries(stamps).map(async ([key, value]) => {
+              if (value && positions[key]) {
+                const img = new Image();
+                img.src = value;
+                await new Promise((resolve) => {
+                  img.onload = async () => {
+                    const scaledX = positions[key].x * RENDER_SCALE;
+                    const scaledY = positions[key].y * RENDER_SCALE;
+                    await drawImageWithQuality(
+                      context,
+                      img,
+                      scaledX,
+                      scaledY,
+                      STAMP_WIDTH * RENDER_SCALE,
+                      STAMP_HEIGHT * RENDER_SCALE
+                    );
+                    resolve();
+                  };
+                });
+              }
+            })
+          );
+        }
+
+        // Add page to PDF with maximum quality
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        if (pageNum > 1) {
+          pdf.addPage();
+        }
+        pdf.addImage(imgData, 'JPEG', 0, 0, 595.28, 841.89, '', 'FAST');
+
+        // Clean up
+        canvas.remove();
       }
 
-      const blob = await response.blob();
+      // Get the PDF as bytes
+      let finalPdfBytes = await pdf.output('arraybuffer');
+
+      // Sanitize if requested
+      if (sanitizeMetadata) {
+        try {
+          console.log('Starting PDF sanitization...');
+          finalPdfBytes = await sanitizePDF(finalPdfBytes);
+          console.log('PDF sanitization completed successfully');
+        } catch (sanitizeError) {
+          console.error('Sanitization error:', sanitizeError);
+          const continueWithoutSanitization = window.confirm(
+            'Metadata sanitization failed. Would you like to download the PDF without sanitization?'
+          );
+          if (!continueWithoutSanitization) {
+            setIsProcessing(false);
+            return;
+          }
+        }
+      }
+
+      // Download the PDF
+      const blob = new Blob([finalPdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
-      setProcessedPdfUrl(url);
+      const link = document.createElement('a');
+      const fileName = `${pdfFile.name.replace('.pdf', '')}-${
+        sanitizeMetadata ? 'secured' : 'signed'
+      }.pdf`;
+
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
     } catch (error) {
-      console.error('Error processing PDF:', error);
-      alert('Failed to process PDF. Please try again.');
+      console.error('Error generating PDF:', error);
+      alert(`Failed to generate PDF: ${error.message}`);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const handleDownload = () => {
-    if (processedPdfUrl) {
-      const link = document.createElement('a');
-      link.href = processedPdfUrl;
-      link.download = `signed-transaction-${transactionData?.referencecode || 'receipt'}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+  // Add a function to verify sanitization
+  const verifySanitization = async (pdfBytes) => {
+    try {
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+      console.log('Metadata after sanitization:', {
+        title: pdfDoc.getTitle(),
+        author: pdfDoc.getAuthor(),
+        subject: pdfDoc.getSubject(),
+        keywords: pdfDoc.getKeywords(),
+        creator: pdfDoc.getCreator(),
+        producer: pdfDoc.getProducer()
+      });
+    } catch (error) {
+      console.error('Error verifying sanitization:', error);
     }
   };
 
@@ -276,6 +512,67 @@ const Signatures = () => {
       }
     };
   }, [pdfPreview]);
+
+  // Update the preview rendering of signatures and stamps
+  const renderSignaturePreview = (signature, key) => {
+    if (!signature) return null;
+    
+    const style = positions[key] ? {
+      position: 'absolute',
+      left: positions[key].x,
+      top: positions[key].y,
+      width: `${SIGNATURE_WIDTH}px`,
+      height: `${SIGNATURE_HEIGHT}px`,
+      cursor: 'move',
+      objectFit: 'contain',
+      imageRendering: 'high-quality',
+      backgroundColor: 'rgba(255, 255, 255, 0.01)', // More transparent background
+      border: '1px dashed #ccc'
+    } : {};
+
+    return (
+      <img
+        src={signature}
+        alt="Signature"
+        className="signature-preview"
+        draggable="true"
+        onDragStart={(e) => handleDragStart(e, key)}
+        onDrag={(e) => handleDrag(e, key)}
+        onDragEnd={handleDragEnd}
+        style={style}
+      />
+    );
+  };
+
+  const renderStampPreview = (stamp, key) => {
+    if (!stamp) return null;
+    
+    const style = positions[key] ? {
+      position: 'absolute',
+      left: positions[key].x,
+      top: positions[key].y,
+      width: `${STAMP_WIDTH}px`,
+      height: `${STAMP_HEIGHT}px`,
+      cursor: 'move',
+      objectFit: 'contain',
+      imageRendering: 'high-quality',
+      backgroundColor: 'rgba(255, 255, 255, 0.01)', // More transparent background
+      border: '1px dashed #ccc'
+    } : {};
+
+    return (
+      <img
+        src={stamp}
+        alt="Stamp"
+        className="stamp-preview"
+        draggable="true"
+        onDragStart={(e) => handleDragStart(e, key)}
+        onDrag={(e) => handleDrag(e, key)}
+        onDragEnd={handleDragEnd}
+        style={style}
+      />
+    );
+  };
 
   return (
     <div className="signatures-page">
@@ -476,23 +773,44 @@ const Signatures = () => {
                       </button>
                     </div>
                   )}
-                  <button 
-                    className="process-btn"
-                    onClick={handleProcessPDF}
-                    disabled={isProcessing}
-                  >
-                    {isProcessing ? (
-                      <>
-                        <span className="spinner"></span>
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <i className="fas fa-cog"></i>
-                        Process PDF
-                      </>
-                    )}
-                  </button>
+                  <div className="download-options">
+                    <label className="sanitize-option">
+                      <input
+                        type="checkbox"
+                        checked={sanitizeMetadata}
+                        onChange={(e) => setSanitizeMetadata(e.target.checked)}
+                      />
+                      <span className="checkbox-label">
+                        <i className="fas fa-shield-alt"></i>
+                        Remove Metadata
+                      </span>
+                      <div className="tooltip">
+                        Removes sensitive information like author, creation date, and other metadata
+                      </div>
+                    </label>
+
+                    <button 
+                      className={`process-btn ${isProcessing ? 'processing' : ''}`}
+                      onClick={generatePDFWithSignatures}
+                      disabled={isProcessing || !pdfFile}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <span className="spinner"></span>
+                          <span>
+                            {sanitizeMetadata ? 'Processing & Sanitizing...' : 'Processing...'}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <i className="fas fa-file-download"></i>
+                          <span style={{color: 'red'}}>
+                            {sanitizeMetadata ? 'Download Secure PDF' : 'Download Signed PDF'}
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -540,85 +858,12 @@ const Signatures = () => {
                     />
                   </Document>
                   <div className="signatures-overlay">
-                    {Object.entries(signatures).map(([key, value]) => (
-                      value && (
-                        <div
-                          key={key}
-                          className={`signature-element ${isDragging && selectedElement === key ? 'dragging' : ''}`}
-                          style={{
-                            left: `${positions[key]?.x || 0}px`,
-                            top: `${positions[key]?.y || 0}px`,
-                            cursor: 'move',
-                            position: 'absolute',
-                            transform: 'translate(0, 0)',
-                            zIndex: isDragging && selectedElement === key ? 1000 : 10,
-                            touchAction: 'none'
-                          }}
-                          onMouseDown={(e) => handleDragStart(e, key)}
-                          onTouchStart={(e) => {
-                            const touch = e.touches[0];
-                            handleDragStart({
-                              preventDefault: () => {},
-                              clientX: touch.clientX,
-                              clientY: touch.clientY,
-                              currentTarget: e.currentTarget
-                            }, key);
-                          }}
-                        >
-                          <img 
-                            src={value} 
-                            alt={`${key} signature`}
-                            style={{
-                              maxWidth: '150px',
-                              maxHeight: '60px',
-                              userSelect: 'none',
-                              pointerEvents: 'none'
-                            }}
-                            draggable="false"
-                          />
-                        </div>
-                      )
-                    ))}
-
-                    {Object.entries(stamps).map(([key, value]) => (
-                      value && (
-                        <div
-                          key={key}
-                          className={`stamp-element ${isDragging && selectedElement === key ? 'dragging' : ''}`}
-                          style={{
-                            left: `${positions[key]?.x || 0}px`,
-                            top: `${positions[key]?.y || 0}px`,
-                            cursor: 'move',
-                            position: 'absolute',
-                            transform: 'translate(0, 0)',
-                            zIndex: isDragging && selectedElement === key ? 1000 : 10,
-                            touchAction: 'none'
-                          }}
-                          onMouseDown={(e) => handleDragStart(e, key)}
-                          onTouchStart={(e) => {
-                            const touch = e.touches[0];
-                            handleDragStart({
-                              preventDefault: () => {},
-                              clientX: touch.clientX,
-                              clientY: touch.clientY,
-                              currentTarget: e.currentTarget
-                            }, key);
-                          }}
-                        >
-                          <img 
-                            src={value} 
-                            alt={`${key} stamp`}
-                            style={{
-                              maxWidth: '150px',
-                              maxHeight: '80px',
-                              userSelect: 'none',
-                              pointerEvents: 'none'
-                            }}
-                            draggable="false"
-                          />
-                        </div>
-                      )
-                    ))}
+                    {Object.entries(signatures).map(([key, value]) => 
+                      renderSignaturePreview(value, key)
+                    )}
+                    {Object.entries(stamps).map(([key, value]) => 
+                      renderStampPreview(value, key)
+                    )}
                   </div>
                 </div>
               ) : (
@@ -629,17 +874,11 @@ const Signatures = () => {
               )}
             </div>
 
-            {processedPdfUrl && (
-              <div className="preview-actions">
-                <button 
-                  className="download-btn"
-                  onClick={handleDownload}
-                >
-                  <i className="fas fa-download"></i>
-                  Download Processed PDF
-                </button>
-              </div>
-            )}
+            {/* Hidden canvas for PDF generation */}
+            <canvas
+              ref={canvasRef}
+              style={{ display: 'none' }}
+            />
           </div>
         </div>
       </div>

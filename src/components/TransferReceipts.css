@@ -226,101 +226,156 @@
 .table-container {
   overflow-x: auto;
   background: #ffffff;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #e2e8f0;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;
 }
 
 .receipts-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+  font-size: 14px;
+  table-layout: fixed;
+}
+
+.receipts-table thead {
+  background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
 }
 
 .receipts-table th {
-  background: #f7fafc;
-  color: #2d3748;
-  padding: 12px 16px;
+  background: transparent;
+  color: #1e293b;
+  padding: 16px;
   text-align: left;
   font-weight: 600;
   cursor: pointer;
   user-select: none;
   border-bottom: 2px solid #e2e8f0;
   white-space: nowrap;
+  transition: background-color 0.2s;
+  position: relative;
 }
 
 .receipts-table th:hover {
   background: #edf2f7;
 }
 
-.receipts-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e2e8f0;
-  color: #4a5568;
+.receipts-table th::after {
+  content: '↑';
+  position: absolute;
+  right: 8px;
+  opacity: 0.5;
 }
 
-.receipts-table tr:hover {
+.receipts-table th[data-sort='asc']::after {
+  content: '↑';
+  opacity: 1;
+}
+
+.receipts-table th[data-sort='desc']::after {
+  content: '↓';
+  opacity: 1;
+}
+
+.receipts-table th:nth-child(1) {
+  width: 40%;
+}
+
+.receipts-table th:nth-child(2) {
+  width: 25%;
+}
+
+.receipts-table th:nth-child(3) {
+  width: 15%;
+}
+
+.receipts-table th:nth-child(4) {
+  width: 20%;
+}
+
+.receipts-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #475569;
+  vertical-align: middle;
+}
+
+.receipts-table tr:last-child td {
+  border-bottom: none;
+}
+
+.receipts-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.receipts-table tbody tr:hover {
   background-color: #f8fafc;
 }
 
 .filename-cell {
-  max-width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #2c5282;
+  color: #2563eb;
+  font-weight: 500;
+  padding-right: 16px;
 }
 
 .actions-cell {
-  white-space: nowrap;
-  text-align: right;
-  min-width: 220px;
-  padding: 8px 16px;
+  padding: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  align-items: center;
 }
 
 .view-btn, .download-btn {
-  padding: 8px 16px;
-  margin: 0 6px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-width: 100px;
-  text-decoration: none;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
   font-size: 14px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  height: 36px;
+  flex-shrink: 0;
 }
 
 .view-btn {
-  background-color: #3182ce;
-  color: #ffffff;
+  background: #3b82f6;
+  color: white;
 }
 
 .view-btn:hover {
-  background-color: #2b6cb0;
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
 .download-btn {
-  background-color: #4299e1;
-  color: #ffffff;
+  background: #10b981;
+  color: white;
 }
 
 .download-btn:hover {
-  background-color: #3182ce;
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
 }
 
-/* Remove the emoji icons */
-.view-btn::before, .download-btn::before {
-  content: none;
-}
-
-/* Add Font Awesome icon styles */
 .view-btn i, .download-btn i {
   font-size: 14px;
-  margin-right: 6px;
+}
+
+.view-btn span, .download-btn span {
+  margin-left: 6px;
+  display: inline-block;
 }
 
 .loading-container {
@@ -329,7 +384,9 @@
   align-items: center;
   justify-content: center;
   padding: 40px;
-  color: #2c5282;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .loading-container .loader {
@@ -348,47 +405,103 @@
 }
 
 .error-container {
-  text-align: center;
-  padding: 40px;
-  color: #e53e3e;
-  background: #fff5f5;
+  padding: 24px;
+  background: #fee2e2;
   border-radius: 8px;
-  margin: 20px;
+  text-align: center;
+  margin: 20px 0;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .transfer-receipts-container {
-    margin: 10px;
-    padding: 15px;
-  }
+.retry-btn {
+  margin-top: 16px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
 
-  .receipts-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
+.retry-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
 
-  .header-actions {
-    width: 100%;
-    justify-content: space-between;
+@media (max-width: 1024px) {
+  .receipts-table {
+    table-layout: auto;
   }
 
   .actions-cell {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
     padding: 8px;
+    gap: 6px;
   }
 
   .view-btn, .download-btn {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .receipts-table th:nth-child(1) {
+    width: 35%;
+  }
+
+  .receipts-table th:nth-child(2) {
+    width: 30%;
+  }
+
+  .receipts-table th:nth-child(3) {
+    width: 15%;
+  }
+
+  .receipts-table th:nth-child(4) {
+    width: 20%;
+  }
+
+  .actions-cell {
     min-width: auto;
-    padding: 6px 12px;
+  }
+
+  .view-btn, .download-btn {
+    width: 36px;
+    min-width: 36px;
+    padding: 8px;
+  }
+
+  .view-btn span, .download-btn span {
+    display: none;
+  }
+
+  .view-btn i, .download-btn i {
     margin: 0;
   }
 }
 
-/* Empty state styling */
+@media (max-width: 480px) {
+  .receipts-table th:nth-child(3) {
+    display: none;
+  }
+  
+  .receipts-table td:nth-child(3) {
+    display: none;
+  }
+
+  .receipts-table th:nth-child(1) {
+    width: 40%;
+  }
+
+  .receipts-table th:nth-child(2) {
+    width: 35%;
+  }
+
+  .receipts-table th:nth-child(4) {
+    width: 25%;
+  }
+}
+
 .no-receipts {
   text-align: center;
   padding: 40px;
@@ -403,19 +516,11 @@
   margin-bottom: 12px;
 }
 
-/* Sort indicators */
 .sort-indicator {
   margin-left: 4px;
   color: #3182ce;
 }
 
-/* Hover effects for interactive elements */
-.receipts-table tbody tr:hover {
-  background-color: #f7fafc;
-  transition: background-color 0.2s;
-}
-
-/* Remove dark mode support as per theme requirements */
 @media (prefers-color-scheme: dark) {
   /* Remove dark mode styles */
 } 

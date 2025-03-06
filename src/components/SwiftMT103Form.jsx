@@ -79,7 +79,7 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
   // Add this function after other state declarations
   const saveTransaction = async (transactionData) => {
     try {
-      const response = await fetch('http://127.0.0.1:5005/api/save-transaction', {
+      const response = await fetch('http://183.83.218.245:5005/api/save-transaction', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -296,7 +296,7 @@ const SwiftMT103Form = ({ onSubmit, selectedSenderInfo }) => {
       };
       
       // Save transaction data
-      const saveResponse = await fetch('http://127.0.0.1:5005/api/save-transaction', {
+      const saveResponse = await fetch('http://183.83.218.245:5005/api/save-transaction', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
